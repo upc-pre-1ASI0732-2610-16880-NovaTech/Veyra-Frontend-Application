@@ -1,0 +1,32 @@
+@if(store.isSignedIn()){
+  <button mat-button>Welcome, {{ store.currentUsername() }}</button> |
+  <button mat-button (click)="performSignOut()">Sign-Out</button>
+} @else {
+  <section class="auth-container">
+    <div class="register-section">
+      <button
+        mat-stroked-button
+        color="primary"
+        class="register-btn"
+        (click)="performSignIn()">
+        SIGN-IN
+      </button>
+
+      <button
+        mat-stroked-button
+        color="primary"
+        class="register-btn"
+        (click)="performSignUpUser()">
+        CREATE USER
+      </button>
+
+      <button
+        mat-stroked-button
+        color="accent"
+        class="register-btn admin-btn"
+        (click)="performSignUpAdmin()">
+        CREATE ADMIN
+      </button>
+    </div>
+  </section>
+}
