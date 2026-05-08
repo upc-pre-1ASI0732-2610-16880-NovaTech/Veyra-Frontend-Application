@@ -2,6 +2,7 @@ export const environment = {
   production: true,
   platformProviderApiBaseUrl: 'https://veyra-backend-application-release.onrender.com/api/v1',
 
+
   // Analytics Bounded Context
   platformProviderAnalyticsStaffTerminationsEndpointPath: '/nursing-homes/{nursingHomeId}/analytics/staff-terminations',
   platformProviderAnalyticsStaffHiresEndpointPath: '/nursing-homes/{nursingHomeId}/analytics/staff-hires',
