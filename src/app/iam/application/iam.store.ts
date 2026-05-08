@@ -25,11 +25,23 @@ export class IamStore {
   readonly error = this._errorSignal.asReadonly();
   readonly isLoadingUsers = this.loadingUsers.asReadonly();
 
-  constructor(private iamApi: IamApi) {
-    this.isSignedInSignal.set(false);
-    this.currentUsernameSignal.set(null);
-    this.currentUserIdSignal.set(null);
-  }
+    constructor(private iamApi: IamApi) {
+      const token = localStorage.getItem('token');
+      const userId = localStorage.getItem('userId');
+      const username = localStorage.getItem('username'); // Recuperamos el username también
+
+    if (token && userId) {
+        // Si el token existe, restauramos la sesión en las Signals
+        this.isSignedInSignal.set(true);
+        this.currentUserIdSignal.set(Number(userId));
+        this.currentUsernameSignal.set(username);
+      } else {
+
+        this.isSignedInSignal.set(false);
+        this.currentUsernameSignal.set(null);
+        this.currentUserIdSignal.set(null);
+      }
+    }
 
   createAdministrator(createAdministratorCommand: CreateAdministratorCommand, router: Router) {
     this.iamApi.createAdministrator(createAdministratorCommand).subscribe({
@@ -55,6 +67,7 @@ export class IamStore {
       next: (signInResource) => {
         localStorage.setItem('token', signInResource.token);
         localStorage.setItem('userId', signInResource.id.toString());
+        localStorage.setItem('username', signInResource.username); // <-- ¡Agrega esta línea!
 
         this.isSignedInSignal.set(true);
         this.currentUsernameSignal.set(signInResource.username);
@@ -95,6 +108,7 @@ export class IamStore {
   signOut(router: Router) {
     localStorage.removeItem('token');
     localStorage.removeItem('userId');
+    localStorage.removeItem('username');
     localStorage.removeItem('nursingHomeId');
     this.isSignedInSignal.set(false);
     this.currentUsernameSignal.set(null);
