@@ -1,45 +1,119 @@
 <div class="page-container">
 
-  <div class="plan-card">
-    <h1 class="plan-title">Nursing Home Plan</h1>
-
-    <p class="plan-description">
-      A robust and comprehensive solution for care institutions looking to optimize management,
-      improve communication, and elevate their standard of care.
-    </p>
-
-    <div class="discount">Save 15% annually</div>
-
-    <!-- Monthly -->
-    <div class="price-box">
-      <div class="plan-price">$300</div>
-      <div class="plan-sub">Per month</div>
-
-      <button class="button-choose" (click)="choosePlan('monthly')">
-        Choose Monthly Plan
-      </button>
-    </div>
-
-    <!-- Annual -->
-    <div class="price-box">
-      <div class="plan-price">$3000</div>
-      <div class="plan-sub">Per year</div>
-
-      <button class="button-choose" (click)="choosePlan('annual')">
-        Choose Annual Plan
-      </button>
-    </div>
-
-    <h3 class="features-title">Features</h3>
-    <ul class="feature-list">
-      <li>Unlimited resident registration.</li>
-      <li>Medical history and medication management.</li>
-      <li>Multi-user roles (admin, nursing, admin staff).</li>
-      <li>Staff schedule + shift management.</li>
-      <li>Attendance tracking.</li>
-      <li>Advanced reports and dashboards.</li>
-      <li>Basic API integration + data export.</li>
-    </ul>
+  <!-- Back -->
+  <div class="back-btn-container">
+    <button class="back-btn" (click)="goBack()">
+      <i class="fa-solid fa-arrow-left"></i> Back to Plans
+    </button>
   </div>
+
+  <!-- Header -->
+  <div class="header-section">
+    <span class="badge">
+      <i class="fa-solid fa-hospital-user"></i> Institutional Plan
+    </span>
+    <h1 class="main-title">Built for<br>care teams.</h1>
+    <p class="main-subtitle">
+      A robust solution for care institutions looking to optimize<br>
+      management, communication, and elevate their standard of care.
+    </p>
+  </div>
+
+  <!-- Bento Grid de precios -->
+  <div class="bento-grid">
+
+    <!-- Tarjeta Mensual -->
+    <div class="bento-item monthly-card" (click)="choosePlan('monthly')">
+      <div class="card-content">
+        <div class="top-row">
+          <div class="icon-box">
+            <i class="fa-solid fa-calendar-day"></i>
+          </div>
+          <span class="plan-label">Monthly</span>
+        </div>
+        <div class="mid-row">
+          <h3>Flexible billing</h3>
+          <p>Full institutional access, no long-term commitment. Cancel anytime.</p>
+        </div>
+        <div class="bottom-row">
+          <div class="price-block">
+            <span class="amount">$300</span>
+            <span class="period">/ month</span>
+          </div>
+          <button class="action-arrow" aria-label="Choose monthly plan">
+            <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tarjeta Anual -->
+    <div class="bento-item annual-card" (click)="choosePlan('annual')">
+      <div class="card-content">
+        <div class="top-row">
+          <div class="icon-box">
+            <i class="fa-solid fa-calendar-check"></i>
+          </div>
+          <span class="plan-label">Annual</span>
+          <span class="popular-tag">Save 15%</span>
+        </div>
+        <div class="mid-row">
+          <h3>Best value</h3>
+          <p>Everything in monthly, billed once a year. Save $600 compared to monthly.</p>
+        </div>
+        <div class="bottom-row">
+          <div class="price-block">
+            <span class="amount">$250</span>
+            <span class="period">/ month</span>
+            <div class="billed-note">Billed as $3,000/year</div>
+            <div class="orig-price">$300/mo</div>
+          </div>
+          <button class="cta-btn">Get started</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Features -->
+  <div class="features-card">
+    <h3 class="features-title">Everything included</h3>
+    <div class="feature-list">
+      <div class="feat">
+        <div class="feat-icon"><i class="fa-solid fa-check"></i></div>
+        <span>Unlimited resident registration</span>
+      </div>
+      <div class="feat">
+        <div class="feat-icon"><i class="fa-solid fa-check"></i></div>
+        <span>Medical history and medication management</span>
+      </div>
+      <div class="feat">
+        <div class="feat-icon"><i class="fa-solid fa-check"></i></div>
+        <span>Multi-user roles (admin, nursing, admin staff)</span>
+      </div>
+      <div class="feat">
+        <div class="feat-icon"><i class="fa-solid fa-check"></i></div>
+        <span>Staff schedule &amp; shift management</span>
+      </div>
+      <div class="feat">
+        <div class="feat-icon"><i class="fa-solid fa-check"></i></div>
+        <span>Attendance tracking</span>
+      </div>
+      <div class="feat">
+        <div class="feat-icon"><i class="fa-solid fa-check"></i></div>
+        <span>Advanced reports and dashboards</span>
+      </div>
+      <div class="feat">
+        <div class="feat-icon"><i class="fa-solid fa-check"></i></div>
+        <span>Basic API integration &amp; data export</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Trust -->
+  <p class="trust-note">
+    <i class="fa-solid fa-shield-halved"></i>
+    Secure checkout &nbsp;·&nbsp; Cancel anytime &nbsp;·&nbsp; No hidden fees
+  </p>
 
 </div>
