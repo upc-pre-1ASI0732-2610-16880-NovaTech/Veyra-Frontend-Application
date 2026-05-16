@@ -1,45 +1,111 @@
 <div class="page-container">
 
-  <div class="plan-card">
-    <h1 class="plan-title">Family Plan</h1>
+  <!-- Back -->
+  <div class="back-btn-container">
+    <button class="back-btn" (click)="goBack()">
+      <i class="fa-solid fa-arrow-left"></i> Back to Plans
+    </button>
+  </div>
 
-    <p class="plan-description">
-      The perfect plan for families managing the care of their elders at home,
-      with peace of mind and full visibility.
+  <!-- Header -->
+  <div class="header-section">
+    <span class="badge">
+      <i class="fa-solid fa-house-chimney-user"></i> Family Plan
+    </span>
+    <h1 class="main-title">Care at home,<br>together.</h1>
+    <p class="main-subtitle">
+      One account for the whole family. Full visibility,<br>
+      shared caregiving, zero chaos.
     </p>
+  </div>
 
-    <div class="discount">Save 15% annually</div>
+  <!-- Bento Grid de precios -->
+  <div class="bento-grid">
 
-    <!-- Monthly -->
-    <div class="price-box">
-      <div class="plan-price">$30</div>
-      <div class="plan-sub">Per month</div>
-
-      <button class="button-choose" (click)="choosePlan('monthly')">
-        Choose Monthly Plan
-      </button>
+    <!-- Tarjeta Mensual -->
+    <div class="bento-item monthly-card" (click)="choosePlan('monthly')">
+      <div class="card-content">
+        <div class="top-row">
+          <div class="icon-box">
+            <i class="fa-solid fa-calendar-day"></i>
+          </div>
+          <span class="plan-label">Monthly</span>
+        </div>
+        <div class="mid-row">
+          <h3>Flexible billing</h3>
+          <p>Full access, no commitment. Cancel anytime with no penalties.</p>
+        </div>
+        <div class="bottom-row">
+          <div class="price-block">
+            <span class="amount">$30</span>
+            <span class="period">/ month</span>
+          </div>
+          <button class="action-arrow" aria-label="Choose monthly plan">
+            <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </div>
+      </div>
     </div>
 
-    <!-- Annual -->
-    <div class="price-box">
-      <div class="plan-price">$300</div>
-      <div class="plan-sub">Per year</div>
-
-      <button class="button-choose" (click)="choosePlan('annual')">
-        Choose Annual Plan
-      </button>
+    <!-- Tarjeta Anual -->
+    <div class="bento-item annual-card" (click)="choosePlan('annual')">
+      <div class="card-content">
+        <div class="top-row">
+          <div class="icon-box">
+            <i class="fa-solid fa-calendar-check"></i>
+          </div>
+          <span class="plan-label">Annual</span>
+          <span class="popular-tag">Save 15%</span>
+        </div>
+        <div class="mid-row">
+          <h3>Best value</h3>
+          <p>Everything in monthly, billed once a year. Save $60 compared to monthly.</p>
+        </div>
+        <div class="bottom-row">
+          <div class="price-block">
+            <span class="amount">$25</span>
+            <span class="period">/ month</span>
+            <div class="billed-note">Billed as $300/year</div>
+            <div class="orig-price">$30/mo</div>
+          </div>
+          <button class="cta-btn">Get started</button>
+        </div>
+      </div>
     </div>
-
-    <h3 class="features-title">Features</h3>
-    <ul class="feature-list">
-      <li>One family account with multiple caregiver access.</li>
-      <li>Medication reminders + logging.</li>
-      <li>Detailed daily care history.</li>
-      <li>Mobile & web access.</li>
-      <li>Caregiver notes & schedule viewing.</li>
-      <li>Email support (48–72h).</li>
-    </ul>
 
   </div>
+
+  <!-- Features -->
+  <div class="features-card">
+    <h3 class="features-title">Everything included</h3>
+    <div class="feature-list">
+      <div class="feat">
+        <div class="feat-icon"><i class="fa-solid fa-check"></i></div>
+        <span>One family account with multiple caregiver access</span>
+      </div>
+      <div class="feat">
+        <div class="feat-icon"><i class="fa-solid fa-check"></i></div>
+        <span>Medication reminders &amp; logging</span>
+      </div>
+      <div class="feat">
+        <div class="feat-icon"><i class="fa-solid fa-check"></i></div>
+        <span>Detailed daily care history</span>
+      </div>
+      <div class="feat">
+        <div class="feat-icon"><i class="fa-solid fa-check"></i></div>
+        <span>Mobile &amp; web access</span>
+      </div>
+      <div class="feat">
+        <div class="feat-icon"><i class="fa-solid fa-check"></i></div>
+        <span>Caregiver notes &amp; schedule viewing</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Trust -->
+  <p class="trust-note">
+    <i class="fa-solid fa-shield-halved"></i>
+    Secure checkout &nbsp;·&nbsp; Cancel anytime &nbsp;·&nbsp; No hidden fees
+  </p>
 
 </div>
