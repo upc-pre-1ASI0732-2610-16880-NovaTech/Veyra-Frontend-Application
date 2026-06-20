@@ -13,14 +13,23 @@ export abstract class ErrorHandlingEnabledBaseType {
    */
   protected handleError(operation: string) {
     return (error: HttpErrorResponse): Observable<never> => {
-      let errorMessage = operation;
-      if (error.status === 404) {
-        errorMessage = `Resource not found: ${operation}`;
+      let errorMessage: string;
+      if (error.status === 0) {
+        errorMessage = 'No se pudo conectar con el servidor. Verifica tu conexión.';
+      } else if (error.status === 404) {
+        errorMessage = `Recurso no encontrado (${operation})`;
+      } else if (error.error?.detail) {
+        errorMessage = error.error.detail;
+      } else if (error.error?.message) {
+        errorMessage = error.error.message;
+      } else if (typeof error.error === 'string' && error.error.length > 0) {
+        errorMessage = error.error;
       } else if (error.error instanceof ErrorEvent) {
-        errorMessage = `${operation}: ${error.error.message}`;
+        errorMessage = error.error.message;
       } else {
-        errorMessage = `${operation}: ${error.statusText || 'Unexpected error'}`;
+        errorMessage = `Error ${error.status}: ${error.statusText || 'Error inesperado'} (${operation})`;
       }
+      console.error(`[${operation}] HTTP ${error.status}:`, error.error);
       return throwError(() => new Error(errorMessage));
     }
   }

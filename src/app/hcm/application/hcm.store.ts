@@ -23,17 +23,25 @@ export class HcmStore {
 
   constructor(private hcmApi: HcmApi) {}
 
-  addStaffMember(nursingHomeId: number, staffMemberCommand: CreateStaffMemberCommand) {
+  addStaffMember(
+    nursingHomeId: number,
+    staffMemberCommand: CreateStaffMemberCommand,
+    onSuccess?: () => void,
+    onError?: (msg: string) => void
+  ) {
     this._loadingSignal.set(true);
     this._errorSignal.set(null);
-    this.hcmApi.createStaffMember(nursingHomeId, staffMemberCommand).pipe(retry(2)).subscribe({
+    this.hcmApi.createStaffMember(nursingHomeId, staffMemberCommand).subscribe({
       next: createdStaffMember => {
         this._staffMemberSignal.update(staff => [...staff, createdStaffMember]);
         this._loadingSignal.set(false);
+        onSuccess?.();
       },
       error: err => {
-        this._errorSignal.set(this.formatError(err, 'Failed to create staff member'));
+        const msg = this.formatError(err, 'Error al crear el miembro del personal');
+        this._errorSignal.set(msg);
         this._loadingSignal.set(false);
+        onError?.(msg);
       }
     });
   }
@@ -56,18 +64,26 @@ export class HcmStore {
     })
   }
 
-  updateStaffMember(staffMemberId: number, staffMemberCommand: CreateStaffMemberCommand): void {
+  updateStaffMember(
+    staffMemberId: number,
+    staffMemberCommand: CreateStaffMemberCommand,
+    onSuccess?: () => void,
+    onError?: (msg: string) => void
+  ): void {
     this._loadingSignal.set(true);
     this._errorSignal.set(null);
-    this.hcmApi.updateStaffMember(staffMemberId, staffMemberCommand).pipe(retry(2)).subscribe({
+    this.hcmApi.updateStaffMember(staffMemberId, staffMemberCommand).subscribe({
       next: updatedStaffMember => {
         this._staffMemberSignal.update(staff =>
-        staff.map(sta => sta.id === updatedStaffMember.id ? updatedStaffMember : sta));
+          staff.map(sta => sta.id === updatedStaffMember.id ? updatedStaffMember : sta));
         this._loadingSignal.set(false);
+        onSuccess?.();
       },
       error: err => {
-        this._errorSignal.set(this.formatError(err, 'Failed to update staff member'));
+        const msg = this.formatError(err, 'Error al actualizar el miembro del personal');
+        this._errorSignal.set(msg);
         this._loadingSignal.set(false);
+        onError?.(msg);
       }
     });
   }
@@ -127,6 +143,10 @@ export class HcmStore {
         this._loadingSignal.set(false);
       }
     })
+  }
+
+  clearError(): void {
+    this._errorSignal.set(null);
   }
 
   formatError(error: any, fallback: string): string {
