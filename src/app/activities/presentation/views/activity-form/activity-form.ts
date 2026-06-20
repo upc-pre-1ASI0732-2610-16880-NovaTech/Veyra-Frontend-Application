@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -28,7 +28,7 @@ import { HcmStore } from '../../../../hcm/application/hcm.store';
   templateUrl: './activity-form.html',
   styleUrls: ['./activity-form.css']
 })
-export class ActivityForm implements OnInit {
+export class ActivityForm {
   protected store        = inject(ActivitiesStore);
   protected nursingStore = inject(NursingStore);
   protected hcmStore     = inject(HcmStore);
@@ -46,7 +46,7 @@ export class ActivityForm implements OnInit {
     attendantId:  new FormControl<number | null>(null, { validators: [Validators.required] })
   });
 
-  ngOnInit(): void {
+  constructor() {
     this.nursingStore.loadResidentsByNursingHome(this.nursingHomeId);
     this.hcmStore.loadStaff(this.nursingHomeId);
   }
@@ -56,7 +56,7 @@ export class ActivityForm implements OnInit {
       const v = this.form.getRawValue();
       const command = new CreateActivityCommand(
         v.name, v.activityDate,
-        v.startTime + ':00', v.endTime + ':00',
+        v.startTime, v.endTime,
         v.area, v.residentId!, v.attendantId!
       );
       this.store.addActivity(this.nursingHomeId, command, () => {
