@@ -1,6 +1,6 @@
 export const environment = {
   production: false,
-  platformProviderApiBaseUrl: 'https://veyra-backend-application-release.onrender.com/api/v1',
+  platformProviderApiBaseUrl: 'https://veyra-backend-app.azurewebsites.net/api/v1',
 
   // Analytics Bounded Context
   platformProviderAnalyticsStaffTerminationsEndpointPath: '/nursing-homes/{nursingHomeId}/analytics/staff-terminations',
