@@ -1,21 +1,17 @@
-<div class="form-wrapper">
-  <mat-card class="form-card">
+<app-layout-nursing-home>
 
-    <!-- Header -->
-    <div class="card-header">
-      <button mat-icon-button (click)="onCancel()" matTooltip="Volver" class="back-btn">
-        <mat-icon>arrow_back</mat-icon>
-      </button>
-      <mat-icon class="header-icon">event_note</mat-icon>
-      <div>
-        <h2 class="form-title">{{ 'activities.form.title' | translate }}</h2>
-        <p class="form-subtitle">Registra una nueva actividad para el residente</p>
+  <h1 class="title">{{ 'activities.form.title' | translate }}</h1>
+
+  <div class="form-wrapper">
+    <mat-card class="form-card">
+
+      <div class="card-header-custom">
+        <div class="icon-wrapper">
+          <mat-icon>event_note</mat-icon>
+        </div>
+        <h3>{{ 'activities.form.title' | translate }}</h3>
       </div>
-    </div>
 
-    <mat-divider></mat-divider>
-
-    <mat-card-content>
       <form [formGroup]="form" (ngSubmit)="onSubmit()" class="activity-form">
 
         <!-- Name -->
@@ -98,26 +94,26 @@
         </mat-form-field>
 
         @if (store.error()) {
-          <div class="alert-error">
+          <mat-error class="error-banner">
             <mat-icon>error_outline</mat-icon>
             {{ store.error() }}
-          </div>
+          </mat-error>
         }
 
         <!-- Actions -->
         <div class="form-actions">
-          <button mat-stroked-button type="button" (click)="onCancel()">
-            <mat-icon>close</mat-icon>
+          <button mat-raised-button type="button" (click)="onCancel()">
+            <mat-icon>arrow_back</mat-icon>
             {{ 'activities.form.cancel' | translate }}
           </button>
-          <button mat-flat-button color="primary" type="submit" [disabled]="store.loading()" class="save-btn">
+          <button mat-raised-button color="primary" type="submit" [disabled]="store.loading()">
             <mat-icon>save</mat-icon>
             {{ store.loading() ? ('activities.form.saving' | translate) : ('activities.form.save' | translate) }}
           </button>
         </div>
 
       </form>
-    </mat-card-content>
+    </mat-card>
+  </div>
 
-  </mat-card>
-</div>
+</app-layout-nursing-home>
