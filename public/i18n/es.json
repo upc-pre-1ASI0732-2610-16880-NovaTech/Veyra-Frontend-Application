@@ -375,5 +375,118 @@
       "not-found-message": "No se pudo encontrar la información del miembro del personal solicitado",
       "no-staff": "No hay miembros del personal registrados."
     }
+  },
+
+  "status": {
+    "subscription": {
+      "ACTIVE": "Activa",
+      "PAST_DUE": "Pago vencido",
+      "CANCELED": "Cancelada",
+      "INCOMPLETE": "Incompleta",
+      "INCOMPLETE_EXPIRED": "Expirada",
+      "TRIALING": "En prueba",
+      "UNPAID": "Sin pagar"
+    },
+    "payment": {
+      "PENDING": "Pendiente",
+      "PROCESSING": "Procesando",
+      "SUCCEEDED": "Exitoso",
+      "FAILED": "Fallido",
+      "CANCELED": "Cancelado",
+      "REFUNDED": "Reembolsado"
+    },
+    "activity": {
+      "PENDING": "Pendiente",
+      "COMPLETED": "Completada",
+      "CANCELLED": "Cancelada"
+    },
+    "resident": {
+      "ACTIVE": "Activo",
+      "INACTIVE": "Inactivo",
+      "DISCHARGED": "Dado de alta"
+    }
+  },
+
+  "drug-presentation": {
+    "TABLET": "Tableta",
+    "CAPSULE": "Cápsula",
+    "LIQUID": "Líquido",
+    "INJECTION": "Inyección",
+    "CREAM": "Crema",
+    "DROPS": "Gotas",
+    "PATCH": "Parche",
+    "INHALER": "Inhalador"
+  },
+
+  "activities": {
+    "title": "Actividades",
+    "new": "Nueva Actividad",
+    "no-activities": "No hay actividades para esta fecha.",
+    "loading": "Cargando actividades...",
+    "date-label": "Fecha",
+    "form": {
+      "title": "Nueva Actividad",
+      "name": "Nombre de la Actividad",
+      "date": "Fecha",
+      "start-time": "Hora de Inicio",
+      "end-time": "Hora de Fin",
+      "area": "Área a Desarrollar",
+      "resident": "Residente",
+      "attendant": "Personal Responsable",
+      "save": "Guardar Actividad",
+      "cancel": "Cancelar",
+      "saving": "Guardando...",
+      "name-required": "El nombre es obligatorio",
+      "date-required": "La fecha es obligatoria",
+      "start-time-required": "La hora de inicio es obligatoria",
+      "end-time-required": "La hora de fin es obligatoria",
+      "area-required": "El área es obligatoria",
+      "resident-required": "El residente es obligatorio",
+      "attendant-required": "El personal responsable es obligatorio"
+    },
+    "list": {
+      "hour": "Hora",
+      "activity": "Actividad",
+      "area": "Área",
+      "attendant": "Responsable",
+      "status": "Estado"
+    }
+  },
+
+  "questions": {
+    "title": "Preguntas de Familias",
+    "no-questions": "No hay preguntas de familias aún.",
+    "loading": "Cargando preguntas...",
+    "answer-placeholder": "Escribe tu respuesta...",
+    "submit-answer": "Enviar Respuesta",
+    "answer-label": "Respuesta"
+  },
+
+  "payments": {
+    "title": "Suscripción",
+    "choose": "Elige tu Plan",
+    "family": "Plan Familiar",
+    "nursing-home": "Plan Casa de Reposo",
+    "monthly": "Mensual",
+    "annually": "Anual",
+    "per-month": "/mes",
+    "per-year": "/año",
+    "subscribe": "Suscribirse",
+    "checkout": {
+      "title": "Datos de Pago",
+      "summary": "Resumen del Pedido",
+      "plan": "Plan",
+      "billing": "Ciclo de Facturación",
+      "total": "Total",
+      "pay": "Pagar",
+      "paying": "Procesando...",
+      "cancel": "Cancelar",
+      "card-element": "Datos de tarjeta",
+      "success": "Suscripción creada exitosamente.",
+      "error-generic": "Ocurrió un error al procesar el pago."
+    },
+    "status": "Estado de Suscripción",
+    "current-period": "Período Actual",
+    "cancel-sub": "Cancelar Suscripción"
   }
 }

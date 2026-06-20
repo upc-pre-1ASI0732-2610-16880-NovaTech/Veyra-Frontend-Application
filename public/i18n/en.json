@@ -374,5 +374,118 @@
       "not-found-message": "Could not find the requested staff member information",
       "no-staff": "No staff members registered."
     }
+  },
+
+  "status": {
+    "subscription": {
+      "ACTIVE": "Active",
+      "PAST_DUE": "Past Due",
+      "CANCELED": "Canceled",
+      "INCOMPLETE": "Incomplete",
+      "INCOMPLETE_EXPIRED": "Expired",
+      "TRIALING": "Trialing",
+      "UNPAID": "Unpaid"
+    },
+    "payment": {
+      "PENDING": "Pending",
+      "PROCESSING": "Processing",
+      "SUCCEEDED": "Succeeded",
+      "FAILED": "Failed",
+      "CANCELED": "Canceled",
+      "REFUNDED": "Refunded"
+    },
+    "activity": {
+      "PENDING": "Pending",
+      "COMPLETED": "Completed",
+      "CANCELLED": "Cancelled"
+    },
+    "resident": {
+      "ACTIVE": "Active",
+      "INACTIVE": "Inactive",
+      "DISCHARGED": "Discharged"
+    }
+  },
+
+  "drug-presentation": {
+    "TABLET": "Tablet",
+    "CAPSULE": "Capsule",
+    "LIQUID": "Liquid",
+    "INJECTION": "Injection",
+    "CREAM": "Cream",
+    "DROPS": "Drops",
+    "PATCH": "Patch",
+    "INHALER": "Inhaler"
+  },
+
+  "activities": {
+    "title": "Activities",
+    "new": "New Activity",
+    "no-activities": "No activities for this date.",
+    "loading": "Loading activities...",
+    "date-label": "Date",
+    "form": {
+      "title": "New Activity",
+      "name": "Activity Name",
+      "date": "Date",
+      "start-time": "Start Time",
+      "end-time": "End Time",
+      "area": "Area to Develop",
+      "resident": "Resident",
+      "attendant": "Responsible Staff",
+      "save": "Save Activity",
+      "cancel": "Cancel",
+      "saving": "Saving...",
+      "name-required": "Name is required",
+      "date-required": "Date is required",
+      "start-time-required": "Start time is required",
+      "end-time-required": "End time is required",
+      "area-required": "Area is required",
+      "resident-required": "Resident is required",
+      "attendant-required": "Responsible staff is required"
+    },
+    "list": {
+      "hour": "Time",
+      "activity": "Activity",
+      "area": "Area",
+      "attendant": "Responsible",
+      "status": "Status"
+    }
+  },
+
+  "questions": {
+    "title": "Family Questions",
+    "no-questions": "No family questions yet.",
+    "loading": "Loading questions...",
+    "answer-placeholder": "Write your answer...",
+    "submit-answer": "Submit Answer",
+    "answer-label": "Answer"
+  },
+
+  "payments": {
+    "title": "Subscription",
+    "choose": "Choose your Plan",
+    "family": "Family Plan",
+    "nursing-home": "Nursing Home Plan",
+    "monthly": "Monthly",
+    "annually": "Annual",
+    "per-month": "/month",
+    "per-year": "/year",
+    "subscribe": "Subscribe",
+    "checkout": {
+      "title": "Payment Details",
+      "summary": "Order Summary",
+      "plan": "Plan",
+      "billing": "Billing Cycle",
+      "total": "Total",
+      "pay": "Pay",
+      "paying": "Processing...",
+      "cancel": "Cancel",
+      "card-element": "Card details",
+      "success": "Subscription created successfully.",
+      "error-generic": "An error occurred while processing your payment."
+    },
+    "status": "Subscription Status",
+    "current-period": "Current Period",
+    "cancel-sub": "Cancel Subscription"
   }
 }
