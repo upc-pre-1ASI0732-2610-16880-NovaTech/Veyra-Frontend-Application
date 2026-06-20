@@ -2,12 +2,14 @@ import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 import { PaymentStore } from '../../../application/payment.store';
 
 @Component({
   selector: 'app-subscription-plan-nursing',
   standalone: true,
-  imports: [CommonModule, CurrencyPipe, TranslatePipe],
+  imports: [CommonModule, CurrencyPipe, TranslatePipe, MatIconModule, MatButtonModule],
   templateUrl: './subscription-plan-nursing.html',
   styleUrls: ['./subscription-plan-nursing.css']
 })

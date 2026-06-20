@@ -3,19 +3,19 @@
   <!-- Back -->
   <div class="back-btn-container">
     <button class="back-btn" (click)="goBack()">
-      <i class="fa-solid fa-arrow-left"></i> Back to Plans
+      <mat-icon>arrow_back</mat-icon> Volver a planes
     </button>
   </div>
 
   <!-- Header -->
   <div class="header-section">
     <span class="badge">
-      <i class="fa-solid fa-hospital-user"></i> Institutional Plan
+      <mat-icon>local_hospital</mat-icon> Plan Institucional
     </span>
-    <h1 class="main-title">Built for<br>care teams.</h1>
+    <h1 class="main-title">Diseñado para<br>equipos de cuidado.</h1>
     <p class="main-subtitle">
-      A robust solution for care institutions looking to optimize<br>
-      management, communication, and elevate their standard of care.
+      Una solución robusta para instituciones que buscan optimizar<br>
+      la gestión, comunicación y elevar el estándar de atención.
     </p>
   </div>
 
@@ -27,21 +27,21 @@
       <div class="card-content">
         <div class="top-row">
           <div class="icon-box">
-            <i class="fa-solid fa-calendar-day"></i>
+            <mat-icon>calendar_today</mat-icon>
           </div>
-          <span class="plan-label">Monthly</span>
+          <span class="plan-label">Mensual</span>
         </div>
         <div class="mid-row">
-          <h3>Flexible billing</h3>
-          <p>Full institutional access, no long-term commitment. Cancel anytime.</p>
+          <h3>Facturación flexible</h3>
+          <p>Acceso institucional completo, sin compromiso a largo plazo. Cancela cuando quieras.</p>
         </div>
         <div class="bottom-row">
           <div class="price-block">
             <span class="amount">{{ monthlyPrice | currency:currency }}</span>
             <span class="period">{{ 'payments.per-month' | translate }}</span>
           </div>
-          <button class="action-arrow" aria-label="Choose monthly plan">
-            <i class="fa-solid fa-arrow-right"></i>
+          <button class="action-arrow" aria-label="Elegir plan mensual">
+            <mat-icon>arrow_forward</mat-icon>
           </button>
         </div>
       </div>
@@ -52,23 +52,23 @@
       <div class="card-content">
         <div class="top-row">
           <div class="icon-box">
-            <i class="fa-solid fa-calendar-check"></i>
+            <mat-icon>event_available</mat-icon>
           </div>
-          <span class="plan-label">Annual</span>
-          <span class="popular-tag">Save 15%</span>
+          <span class="plan-label">Anual</span>
+          <span class="popular-tag">Ahorra 15%</span>
         </div>
         <div class="mid-row">
-          <h3>Best value</h3>
-          <p>Everything in monthly, billed once a year. Save $600 compared to monthly.</p>
+          <h3>Mejor valor</h3>
+          <p>Todo lo del plan mensual, facturado una vez al año. Ahorra comparado con el plan mensual.</p>
         </div>
         <div class="bottom-row">
           <div class="price-block">
             <span class="amount">{{ annualMonthly | currency:currency }}</span>
             <span class="period">{{ 'payments.per-month' | translate }}</span>
-            <div class="billed-note">Billed as {{ annualPrice | currency:currency }}{{ 'payments.per-year' | translate }}</div>
-            <div class="orig-price">{{ monthlyPrice | currency:currency }}/mo</div>
+            <div class="billed-note">Facturado como {{ annualPrice | currency:currency }}{{ 'payments.per-year' | translate }}</div>
+            <div class="orig-price">{{ monthlyPrice | currency:currency }}/mes</div>
           </div>
-          <button class="cta-btn">Get started</button>
+          <button class="cta-btn">Comenzar</button>
         </div>
       </div>
     </div>
@@ -77,11 +77,11 @@
 
   <!-- Features -->
   <div class="features-card">
-    <h3 class="features-title">Everything included</h3>
+    <h3 class="features-title">Todo incluido</h3>
     <div class="feature-list">
       @for (feat of includedFeatures; track feat.name) {
         <div class="feat">
-          <div class="feat-icon"><i class="fa-solid fa-check"></i></div>
+          <div class="feat-icon"><mat-icon>check</mat-icon></div>
           <span>{{ feat.name }}</span>
         </div>
       }
@@ -90,8 +90,8 @@
 
   <!-- Trust -->
   <p class="trust-note">
-    <i class="fa-solid fa-shield-halved"></i>
-    Secure checkout &nbsp;·&nbsp; Cancel anytime &nbsp;·&nbsp; No hidden fees
+    <mat-icon>security</mat-icon>
+    Pago seguro &nbsp;·&nbsp; Cancela cuando quieras &nbsp;·&nbsp; Sin cargos ocultos
   </p>
 
 </div>
