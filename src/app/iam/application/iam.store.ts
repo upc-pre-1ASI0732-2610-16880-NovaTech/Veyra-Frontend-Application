@@ -77,6 +77,7 @@ export class IamStore {
         localStorage.setItem('token', signInResource.token);
         localStorage.setItem('userId', signInResource.id.toString());
         localStorage.setItem('username', signInResource.username);
+        localStorage.removeItem('nursingHomeId');
 
         this.isSignedInSignal.set(true);
         this.currentUsernameSignal.set(signInResource.username);
