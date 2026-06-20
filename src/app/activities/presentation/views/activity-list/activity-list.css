@@ -7,6 +7,8 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 0.75rem;
 }
 
 h2 {
@@ -20,62 +22,92 @@ h2 {
   align-items: center;
 }
 
-.controls input[type="date"] {
-  padding: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+.controls label {
+  font-size: 0.9rem;
+  color: #555;
 }
 
-.controls button {
-  padding: 0.5rem 1rem;
+.controls input[type="date"] {
+  padding: 0.45rem 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.btn-primary {
+  padding: 0.45rem 1rem;
   background: #1976d2;
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
+  font-size: 0.9rem;
 }
 
 .info {
-  color: #666;
+  color: #888;
   text-align: center;
-  padding: 2rem;
+  padding: 3rem 0;
 }
 
 .error-banner {
   background: #ffebee;
   color: #c62828;
-  padding: 0.75rem;
-  border-radius: 4px;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
   margin-bottom: 1rem;
 }
 
-.activity-cards {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.activity-card {
+.activity-table {
+  width: 100%;
+  border-collapse: collapse;
   background: white;
-  border: 1px solid #e0e0e0;
   border-radius: 8px;
-  padding: 1rem;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
 }
 
-.activity-time {
+.activity-table th {
+  background: #f5f5f5;
+  padding: 0.75rem 1rem;
+  text-align: left;
   font-size: 0.85rem;
-  color: #1976d2;
   font-weight: 600;
-  margin-bottom: 0.25rem;
-}
-
-.activity-title {
-  font-size: 1rem;
-  font-weight: 600;
-  margin-bottom: 0.25rem;
-}
-
-.activity-description {
-  font-size: 0.9rem;
   color: #555;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.activity-table td {
+  padding: 0.75rem 1rem;
+  font-size: 0.9rem;
+  border-bottom: 1px solid #f0f0f0;
+  color: #333;
+}
+
+.activity-table tr:last-child td {
+  border-bottom: none;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 0.2rem 0.7rem;
+  border-radius: 12px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.status-pending {
+  background: #fff3e0;
+  color: #e65100;
+}
+
+.status-completed {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.status-cancelled {
+  background: #fce4ec;
+  color: #880e4f;
 }

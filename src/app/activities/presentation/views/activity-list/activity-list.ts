@@ -2,12 +2,14 @@ import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { TranslatePipe } from '@ngx-translate/core';
 import { ActivitiesStore } from '../../../application/activities.store';
+import { StatusTranslatePipe } from '../../../../shared/presentation/pipes/status-translate.pipe';
 
 @Component({
   selector: 'app-activity-list',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TranslatePipe, StatusTranslatePipe],
   templateUrl: './activity-list.html',
   styleUrls: ['./activity-list.css']
 })

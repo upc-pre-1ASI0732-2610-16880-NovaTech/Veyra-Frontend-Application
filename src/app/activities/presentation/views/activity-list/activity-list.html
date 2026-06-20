@@ -1,31 +1,53 @@
 <div class="activity-list-container">
   <div class="header">
-    <h2>Activities</h2>
+    <h2>{{ 'activities.title' | translate }}</h2>
     <div class="controls">
+      <label>{{ 'activities.date-label' | translate }}</label>
       <input type="date" [(ngModel)]="selectedDate" (change)="loadForDate()" />
-      <button (click)="navigateToCreate()">+ New Activity</button>
+      <button class="btn-primary" (click)="navigateToCreate()">
+        + {{ 'activities.new' | translate }}
+      </button>
     </div>
   </div>
 
   @if (store.loading()) {
-    <p class="info">Loading activities…</p>
+    <p class="info">{{ 'activities.loading' | translate }}</p>
   }
 
   @if (store.error()) {
     <div class="error-banner">{{ store.error() }}</div>
   }
 
-  @if (!store.loading() && store.activities().length === 0) {
-    <p class="info">No activities scheduled for this date.</p>
+  @if (!store.loading() && store.activities().length === 0 && !store.error()) {
+    <p class="info">{{ 'activities.no-activities' | translate }}</p>
   }
 
-  <div class="activity-cards">
-    @for (activity of store.activities(); track activity.id) {
-      <div class="activity-card">
-        <div class="activity-time">{{ activity.startTime }} – {{ activity.endTime }}</div>
-        <div class="activity-title">{{ activity.title }}</div>
-        <div class="activity-description">{{ activity.description }}</div>
-      </div>
-    }
-  </div>
+  @if (store.activities().length > 0) {
+    <table class="activity-table">
+      <thead>
+        <tr>
+          <th>{{ 'activities.list.hour' | translate }}</th>
+          <th>{{ 'activities.list.activity' | translate }}</th>
+          <th>{{ 'activities.list.area' | translate }}</th>
+          <th>{{ 'activities.list.attendant' | translate }}</th>
+          <th>{{ 'activities.list.status' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (activity of store.activities(); track activity.activityId) {
+          <tr>
+            <td>{{ activity.hour }}</td>
+            <td>{{ activity.activityName }}</td>
+            <td>{{ activity.areaToDevelop }}</td>
+            <td>{{ activity.attendantName }}</td>
+            <td>
+              <span class="status-badge status-{{ activity.status | lowercase }}">
+                {{ activity.status | statusTranslate:'activity' }}
+              </span>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
 </div>

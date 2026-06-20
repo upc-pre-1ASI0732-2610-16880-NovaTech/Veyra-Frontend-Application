@@ -1,9 +1,8 @@
 export interface ActivityResponse {
-  id: number;
-  nursingHomeId: number;
-  title: string;
-  description: string;
-  startTime: string;
-  endTime: string;
-  date: string;
+  activityId: number;
+  hour: string;
+  attendantName: string;
+  activityName: string;
+  areaToDevelop: string;
+  status: 'PENDING' | 'COMPLETED' | 'CANCELLED';
 }
