@@ -1,41 +1,74 @@
 <div class="activity-form-container">
   <div class="form-card">
-    <h2>New Activity</h2>
+    <h2>{{ 'activities.form.title' | translate }}</h2>
 
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
+
       <div class="form-field">
-        <label>Title *</label>
-        <input formControlName="title" type="text" placeholder="e.g. Physical Therapy" />
-        @if (form.get('title')?.invalid && form.get('title')?.touched) {
-          <span class="error">Title is required.</span>
+        <label>{{ 'activities.form.name' | translate }} *</label>
+        <input formControlName="name" type="text" />
+        @if (form.get('name')?.invalid && form.get('name')?.touched) {
+          <span class="error">{{ 'activities.form.name-required' | translate }}</span>
         }
       </div>
 
       <div class="form-field">
-        <label>Description *</label>
-        <textarea formControlName="description" rows="3" placeholder="Activity description"></textarea>
-        @if (form.get('description')?.invalid && form.get('description')?.touched) {
-          <span class="error">Description is required.</span>
-        }
-      </div>
-
-      <div class="form-field">
-        <label>Date *</label>
-        <input formControlName="date" type="date" />
-        @if (form.get('date')?.invalid && form.get('date')?.touched) {
-          <span class="error">Date is required.</span>
+        <label>{{ 'activities.form.date' | translate }} *</label>
+        <input formControlName="activityDate" type="date" />
+        @if (form.get('activityDate')?.invalid && form.get('activityDate')?.touched) {
+          <span class="error">{{ 'activities.form.date-required' | translate }}</span>
         }
       </div>
 
       <div class="form-row">
         <div class="form-field">
-          <label>Start Time *</label>
+          <label>{{ 'activities.form.start-time' | translate }} *</label>
           <input formControlName="startTime" type="time" />
+          @if (form.get('startTime')?.invalid && form.get('startTime')?.touched) {
+            <span class="error">{{ 'activities.form.start-time-required' | translate }}</span>
+          }
         </div>
         <div class="form-field">
-          <label>End Time *</label>
+          <label>{{ 'activities.form.end-time' | translate }} *</label>
           <input formControlName="endTime" type="time" />
+          @if (form.get('endTime')?.invalid && form.get('endTime')?.touched) {
+            <span class="error">{{ 'activities.form.end-time-required' | translate }}</span>
+          }
         </div>
+      </div>
+
+      <div class="form-field">
+        <label>{{ 'activities.form.area' | translate }} *</label>
+        <input formControlName="area" type="text" placeholder="Ej: Motricidad, Cognitiva..." />
+        @if (form.get('area')?.invalid && form.get('area')?.touched) {
+          <span class="error">{{ 'activities.form.area-required' | translate }}</span>
+        }
+      </div>
+
+      <div class="form-field">
+        <label>{{ 'activities.form.resident' | translate }} *</label>
+        <select formControlName="residentId">
+          <option [value]="null" disabled>-- {{ 'activities.form.resident' | translate }} --</option>
+          @for (r of nursingStore.residents(); track r.id) {
+            <option [value]="r.id">Residente #{{ r.id }}</option>
+          }
+        </select>
+        @if (form.get('residentId')?.invalid && form.get('residentId')?.touched) {
+          <span class="error">{{ 'activities.form.resident-required' | translate }}</span>
+        }
+      </div>
+
+      <div class="form-field">
+        <label>{{ 'activities.form.attendant' | translate }} *</label>
+        <select formControlName="attendantId">
+          <option [value]="null" disabled>-- {{ 'activities.form.attendant' | translate }} --</option>
+          @for (s of hcmStore.staff(); track s.id) {
+            <option [value]="s.id">Personal #{{ s.id }}</option>
+          }
+        </select>
+        @if (form.get('attendantId')?.invalid && form.get('attendantId')?.touched) {
+          <span class="error">{{ 'activities.form.attendant-required' | translate }}</span>
+        }
       </div>
 
       @if (store.error()) {
@@ -43,11 +76,12 @@
       }
 
       <div class="form-actions">
-        <button type="button" (click)="onCancel()">Cancel</button>
+        <button type="button" (click)="onCancel()">{{ 'activities.form.cancel' | translate }}</button>
         <button type="submit" [disabled]="store.loading()">
-          {{ store.loading() ? 'Saving…' : 'Save Activity' }}
+          {{ store.loading() ? ('activities.form.saving' | translate) : ('activities.form.save' | translate) }}
         </button>
       </div>
+
     </form>
   </div>
 </div>
