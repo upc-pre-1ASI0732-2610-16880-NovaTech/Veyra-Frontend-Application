@@ -94,10 +94,10 @@
         </mat-form-field>
 
         @if (store.error()) {
-          <mat-error class="error-banner">
+          <div class="error-banner">
             <mat-icon>error_outline</mat-icon>
             {{ store.error() }}
-          </mat-error>
+          </div>
         }
 
         <!-- Actions -->
