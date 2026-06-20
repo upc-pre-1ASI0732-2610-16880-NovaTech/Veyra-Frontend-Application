@@ -34,6 +34,7 @@ export class AssignRoomForm {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   residentId: number | null = null;
+  private nursingHomeId: number = Number(localStorage.getItem('nursingHomeId'));
 
   form = new FormGroup({
     roomNumber: new FormControl<string>('',   { nonNullable: true, validators: [Validators.required] })
@@ -65,8 +66,8 @@ export class AssignRoomForm {
   constructor() {
     this.route.params.subscribe(params => {
       this.residentId = +params['id'];
-      this.store.loadResidentsByNursingHome(1);
-      this.store.loadRoomsByNursingHome(1);
+      this.store.loadResidentsByNursingHome(this.nursingHomeId);
+      this.store.loadRoomsByNursingHome(this.nursingHomeId);
     });
   }
 
