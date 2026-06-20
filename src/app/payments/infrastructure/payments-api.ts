@@ -1,46 +1,44 @@
-import { AccountsApiEndpoint } from "./accounts-api-endpoint";
-import { PlansApiEndpoint } from "./plans-api-endpoint";
-import { SubscriptionsApiEndpoint } from "./subscriptions-api-endpoint";
-import { AccountResponse } from "./accounts-response";
-import { PlanResponse } from "./plans-response";
-import { SubscriptionResponse } from "./subscriptions-response";
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
+import { PlanResponse } from './plans-response';
+import { SubscriptionResponse } from './subscriptions-response';
 
+const base = environment.platformProviderApiBaseUrl;
+
+@Injectable({ providedIn: 'root' })
 export class PaymentsApi {
-  async getAvailablePlans(): Promise<PlanResponse[]> {
-    const response = await fetch(PlansApiEndpoint.LIST_PLANS);
-    if (!response.ok) throw new Error("Failed to fetch plans");
-    return response.json();
+  constructor(private http: HttpClient) {}
+
+  getPlans(): Observable<PlanResponse[]> {
+    return this.http.get<PlanResponse[]>(`${base}${environment.platformProviderPlansEndpointPath}`);
   }
 
-  async createAccount(payload: {
-    fullName: string;
-    email: string;
-    phone: string;
-    country: string;
-    role: string;
-  }): Promise<AccountResponse> {
-    const response = await fetch(AccountsApiEndpoint.CREATE_ACCOUNT, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-
-    if (!response.ok) throw new Error("Failed to create account");
-    return response.json();
+  createSubscription(userId: number, planType: string, period: 'MONTHLY' | 'ANNUALLY', paymentMethodId: string): Observable<SubscriptionResponse> {
+    const url = `${base}${environment.platformProviderUserSubscriptionsEndpointPath}`.replace('{userId}', userId.toString());
+    return this.http.post<SubscriptionResponse>(url, { planType, period, paymentMethodId });
   }
 
-  async createSubscription(payload: {
-    accountId: string;
-    planId: string;
-    cycle: "monthly" | "annual";
-  }): Promise<SubscriptionResponse> {
-    const response = await fetch(SubscriptionsApiEndpoint.CREATE_SUBSCRIPTION, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
+  getActiveSubscription(userId: number): Observable<SubscriptionResponse> {
+    const url = `${base}${environment.platformProviderUserActiveSubscriptionEndpointPath}`.replace('{userId}', userId.toString());
+    return this.http.get<SubscriptionResponse>(url);
+  }
 
-    if (!response.ok) throw new Error("Failed to create subscription");
-    return response.json();
+  getSubscriptions(userId: number): Observable<SubscriptionResponse[]> {
+    const url = `${base}${environment.platformProviderUserSubscriptionsEndpointPath}`.replace('{userId}', userId.toString());
+    return this.http.get<SubscriptionResponse[]>(url);
+  }
+
+  updateSubscription(userId: number, subscriptionId: number, planType: string, period: 'MONTHLY' | 'ANNUALLY'): Observable<SubscriptionResponse> {
+    const url = `${base}${environment.platformProviderUserSubscriptionsEndpointPath}/${subscriptionId}`.replace('{userId}', userId.toString());
+    return this.http.put<SubscriptionResponse>(url, { planType, period });
+  }
+
+  cancelSubscription(userId: number, subscriptionId: number): Observable<void> {
+    const url = `${base}${environment.platformProviderSubscriptionCancelEndpointPath}`
+      .replace('{userId}', userId.toString())
+      .replace('{subscriptionId}', subscriptionId.toString());
+    return this.http.post<void>(url, {});
   }
 }

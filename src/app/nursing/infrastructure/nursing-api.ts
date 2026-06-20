@@ -146,8 +146,8 @@ export class NursingApi extends BaseApi{
     return this._medicationCommandsApiEndpoint.create(residentId, medicationCommand);
   }
 
-  assignRoomToResident(nursingHomeId: number, residentId: number, assignRoomCommand: AssignRoomCommand): Observable<Resident> {
-    return this._assignRoomCommandsApiEndpoint.assignRoom(nursingHomeId, residentId, assignRoomCommand);
+  assignRoomToResident(residentId: number, assignRoomCommand: AssignRoomCommand): Observable<Resident> {
+    return this._assignRoomCommandsApiEndpoint.assignRoom(residentId, assignRoomCommand);
   }
 
   getAllergies(residentId: number): Observable<Allergy[]> {
