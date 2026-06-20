@@ -10,8 +10,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatTooltipModule } from '@angular/material/tooltip';
+import { LayoutNursingHome } from '../../../../shared/presentation/components/layout-nursing-home/layout-nursing-home';
 import { ActivitiesStore } from '../../../application/activities.store';
 import { CreateActivityCommand } from '../../../domain/model/create-activity.command';
 import { NursingStore } from '../../../../nursing/application/nursing.store';
@@ -24,7 +23,7 @@ import { HcmStore } from '../../../../hcm/application/hcm.store';
     CommonModule, ReactiveFormsModule, TranslatePipe,
     MatFormFieldModule, MatInputModule, MatButtonModule, MatSelectModule,
     MatCardModule, MatIconModule, MatProgressSpinnerModule,
-    MatDividerModule, MatTooltipModule
+    LayoutNursingHome
   ],
   templateUrl: './activity-form.html',
   styleUrls: ['./activity-form.css']

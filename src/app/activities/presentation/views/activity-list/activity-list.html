@@ -1,52 +1,39 @@
-<div class="list-wrapper">
+<app-layout-nursing-home>
 
-  <!-- Page header -->
-  <div class="page-header">
-    <div class="title-block">
-      <mat-icon class="page-icon">event</mat-icon>
-      <div>
-        <h1 class="page-title">{{ 'activities.title' | translate }}</h1>
-        <p class="page-subtitle">Gestiona las actividades del centro</p>
-      </div>
-    </div>
-    <button mat-flat-button color="primary" (click)="navigateToCreate()" class="add-btn">
-      <mat-icon>add</mat-icon>
-      {{ 'activities.new' | translate }}
-    </button>
-  </div>
+  <h1 class="title">{{ 'activities.title' | translate }}</h1>
 
-  <!-- Filters -->
-  <mat-card class="filters-card">
+  <!-- Toolbar -->
+  <div class="toolbar">
     <mat-form-field appearance="outline" class="date-field">
       <mat-label>{{ 'activities.date-label' | translate }}</mat-label>
       <input matInput type="date" [(ngModel)]="selectedDate" (change)="loadForDate()" />
       <mat-icon matSuffix>calendar_today</mat-icon>
     </mat-form-field>
-  </mat-card>
 
-  <!-- Error -->
-  @if (store.error()) {
-    <div class="alert-error">
-      <mat-icon>error_outline</mat-icon>
-      {{ store.error() }}
-    </div>
-  }
+    <button mat-raised-button color="accent" (click)="navigateToCreate()" class="add-btn">
+      <mat-icon>add</mat-icon>
+      {{ 'activities.new' | translate }}
+    </button>
+  </div>
 
   <!-- Loading -->
   @if (store.loading()) {
-    <div class="loading-center">
-      <mat-progress-spinner mode="indeterminate" diameter="52" color="primary"></mat-progress-spinner>
-    </div>
+    <mat-spinner diameter="40"></mat-spinner>
+  }
+
+  <!-- Error -->
+  @if (store.error()) {
+    <mat-error class="error-message">{{ store.error() }}</mat-error>
   }
 
   <!-- Empty state -->
   @if (!store.loading() && store.activities().length === 0 && !store.error()) {
     <div class="empty-state">
       <mat-icon class="empty-icon">event_busy</mat-icon>
-      <p class="empty-text">{{ 'activities.no-activities' | translate }}</p>
-      <button mat-stroked-button color="primary" (click)="navigateToCreate()">
+      <p>{{ 'activities.no-activities' | translate }}</p>
+      <button mat-raised-button color="primary" (click)="navigateToCreate()">
         <mat-icon>add</mat-icon>
-        Registrar actividad
+        {{ 'activities.new' | translate }}
       </button>
     </div>
   }
@@ -105,4 +92,4 @@
     </mat-card>
   }
 
-</div>
+</app-layout-nursing-home>
