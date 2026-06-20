@@ -1,0 +1,242 @@
+.page-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin: 0 0 28px 0;
+}
+
+.page-title mat-icon {
+  font-size: 2rem;
+  width: 2rem;
+  height: 2rem;
+  color: #5FC2BA;
+}
+
+.loading-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 60px;
+}
+
+/* Sin suscripción */
+.no-sub-card {
+  max-width: 480px;
+  margin: 40px auto;
+  border-radius: 16px;
+  padding: 8px;
+}
+
+.no-sub-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 32px;
+  text-align: center;
+}
+
+.no-sub-icon {
+  font-size: 64px;
+  width: 64px;
+  height: 64px;
+  color: #b0bec5;
+}
+
+.no-sub-content h2 {
+  font-size: 1.4rem;
+  color: #37474f;
+  margin: 0;
+}
+
+.no-sub-content p {
+  color: #78909c;
+  margin: 0;
+}
+
+/* Grid principal */
+.management-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+@media (max-width: 768px) {
+  .management-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Tarjeta plan actual */
+.current-plan-card {
+  grid-column: 1 / -1;
+  border-radius: 16px;
+  overflow: hidden;
+  padding: 0;
+}
+
+.card-header-accent {
+  background: linear-gradient(135deg, #5FC2BA, #3da8a0);
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 18px 24px;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.plan-info {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.plan-name {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #2c3e50;
+}
+
+mat-chip-set {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.status-chip { font-weight: 600; }
+.status-chip.status-active { background-color: #e8f5e9; color: #2e7d32; }
+.status-chip.status-canceled { background-color: #fce4ec; color: #c62828; }
+.status-chip.status-past_due { background-color: #fff3e0; color: #e65100; }
+.status-chip.status-trialing { background-color: #e3f2fd; color: #1565c0; }
+.period-chip { background-color: #f3e5f5; color: #6a1b9a; font-weight: 600; }
+
+.info-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  color: #546e7a;
+}
+
+.info-row mat-icon { color: #5FC2BA; margin-top: 2px; }
+
+.info-row > div {
+  display: flex;
+  flex-direction: column;
+}
+
+.info-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #90a4ae;
+}
+
+.info-value {
+  font-size: 0.95rem;
+  color: #2c3e50;
+  font-weight: 500;
+}
+
+/* Tarjetas secundarias */
+.switch-card,
+.other-plan-card,
+.cancel-card {
+  border-radius: 16px;
+  padding: 24px;
+}
+
+.switch-card h3,
+.other-plan-card h3,
+.cancel-card h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin: 0 0 10px 0;
+}
+
+.switch-card h3 mat-icon { color: #5FC2BA; }
+.other-plan-card h3 mat-icon { color: #5FC2BA; }
+.cancel-card h3 mat-icon { color: #e53935; }
+
+.switch-card p,
+.other-plan-card p,
+.cancel-card p {
+  color: #78909c;
+  font-size: 0.9rem;
+  margin: 0 0 16px 0;
+}
+
+.price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.price {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #2c3e50;
+}
+
+.price-period {
+  font-size: 0.85rem;
+  color: #90a4ae;
+}
+
+.features-mini {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.feat-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: #546e7a;
+}
+
+.feat-row mat-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  color: #43a047;
+}
+
+.error-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #fce4ec;
+  color: #c62828;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 0.875rem;
+  margin-top: 8px;
+}
+
+.confirm-cancel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.confirm-text {
+  color: #c62828 !important;
+  font-weight: 500;
+}
+
+.confirm-actions {
+  display: flex;
+  gap: 10px;
+}
