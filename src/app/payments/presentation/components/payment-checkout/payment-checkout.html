@@ -1,89 +1,165 @@
+<!-- ── Top bar ── -->
+<header class="checkout-topbar">
+  <div class="topbar-logo">
+    <mat-icon class="logo-icon">medical_services</mat-icon>
+    <span>Veyra</span>
+  </div>
+  <div class="topbar-secure">
+    <mat-icon>lock</mat-icon>
+    <span>Proceso de pago seguro</span>
+  </div>
+  <div class="topbar-steps">
+    <span class="step done">Plan</span>
+    <mat-icon class="step-arrow">chevron_right</mat-icon>
+    <span class="step active">Pago</span>
+    <mat-icon class="step-arrow">chevron_right</mat-icon>
+    <span class="step">Activar</span>
+  </div>
+</header>
+
+<!-- ── Main layout ── -->
 <div class="checkout-wrapper">
 
-  <!-- Summary sidebar -->
-  <mat-card class="summary-card">
-    <mat-card-header>
-      <div mat-card-avatar class="summary-avatar">
-        <mat-icon>receipt_long</mat-icon>
-      </div>
-      <mat-card-title>{{ 'payments.checkout.summary' | translate }}</mat-card-title>
-      <mat-card-subtitle class="subtitle-white">{{ planTitle }}</mat-card-subtitle>
-    </mat-card-header>
+  <!-- ── LEFT: Summary ── -->
+  <aside class="summary-card">
 
-    <mat-card-content>
-      <div class="summary-row">
-        <span>{{ 'payments.checkout.billing' | translate }}</span>
-        <span class="summary-value">
-          {{ period === 'MONTHLY' ? ('payments.monthly' | translate) : ('payments.annually' | translate) }}
-        </span>
-      </div>
-      <mat-divider class="divider-white"></mat-divider>
-      <div class="summary-row total-row">
-        <span>{{ 'payments.checkout.total' | translate }}</span>
-        <span class="total-amount">{{ planPrice | currency:currency }}</span>
-      </div>
-    </mat-card-content>
-
-    <mat-card-footer class="trust-footer">
-      <mat-icon>lock</mat-icon>
-      <span>Pago seguro · SSL cifrado</span>
-    </mat-card-footer>
-  </mat-card>
-
-  <!-- Form card -->
-  <mat-card class="form-card">
-    <mat-card-header>
-      <mat-card-title>{{ 'payments.checkout.title' | translate }}</mat-card-title>
-      <mat-card-subtitle>Ingresa los datos de tu tarjeta</mat-card-subtitle>
-    </mat-card-header>
-
-    <mat-card-content>
-
-      @if (successMessage) {
-        <div class="alert alert-success">
-          <mat-icon>check_circle</mat-icon>
-          {{ successMessage }}
-        </div>
+    <div class="summary-badge">
+      @if (period === 'ANNUALLY') {
+        <span class="badge badge-savings">Ahorras 2 meses</span>
       }
-      @if (errorMessage) {
-        <div class="alert alert-error">
-          <mat-icon>error</mat-icon>
-          {{ errorMessage }}
-        </div>
-      }
+      <span class="badge badge-plan">{{ planTitle }}</span>
+    </div>
 
-      <!-- Card visual preview -->
-      <div class="card-visual"
-           [class.card-visa]="cardType === 'visa'"
-           [class.card-mc]="cardType === 'mastercard'"
-           [class.card-amex]="cardType === 'amex'">
-        <div class="card-top">
-          <mat-icon class="card-chip-icon">contactless</mat-icon>
-          @if (cardType === 'visa') {
-            <span class="network-label visa-label">VISA</span>
-          } @else if (cardType === 'mastercard') {
-            <mat-icon class="network-icon">toll</mat-icon>
-          } @else {
-            <mat-icon class="network-icon">credit_card</mat-icon>
-          }
-        </div>
-        <div class="card-number-preview">
-          {{ form.get('cardNumber')?.value || '•••• •••• •••• ••••' }}
-        </div>
-        <div class="card-bottom">
-          <div>
-            <div class="card-field-label">TITULAR</div>
-            <div class="card-field-value">{{ (form.get('cardholderName')?.value | uppercase) || 'NOMBRE TITULAR' }}</div>
-          </div>
-          <div>
-            <div class="card-field-label">VENCE</div>
-            <div class="card-field-value">{{ form.get('expiry')?.value || 'MM/AA' }}</div>
-          </div>
+    <div class="summary-price-block">
+      <div class="summary-price-main">{{ planPrice | currency:currency }}</div>
+      <div class="summary-price-period">
+        / {{ period === 'MONTHLY' ? 'mes' : 'año' }}
+        @if (period === 'ANNUALLY') {
+          <span class="summary-price-equiv">(equiv. {{ (planPrice / 12) | currency:currency }}/mes)</span>
+        }
+      </div>
+    </div>
+
+    <mat-divider class="divider-dark"></mat-divider>
+
+    <!-- Billing details -->
+    <div class="summary-details">
+      <div class="detail-row">
+        <span class="detail-label">Plan</span>
+        <span class="detail-val">{{ planTitle }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Ciclo</span>
+        <span class="detail-val">{{ period === 'MONTHLY' ? 'Mensual' : 'Anual' }}</span>
+      </div>
+      <div class="detail-row total-row">
+        <span class="detail-label">Total hoy</span>
+        <span class="detail-val total-val">{{ planPrice | currency:currency }}</span>
+      </div>
+    </div>
+
+    <!-- Features -->
+    <div class="summary-features">
+      @if (planType === 'NURSING_HOME') {
+        <div class="feature-item"><mat-icon>check_circle</mat-icon>Residentes ilimitados</div>
+        <div class="feature-item"><mat-icon>check_circle</mat-icon>Personal ilimitado</div>
+        <div class="feature-item"><mat-icon>check_circle</mat-icon>Historial médico completo</div>
+        <div class="feature-item"><mat-icon>check_circle</mat-icon>Gestión de actividades</div>
+        <div class="feature-item"><mat-icon>check_circle</mat-icon>Soporte prioritario 24/7</div>
+      } @else {
+        <div class="feature-item"><mat-icon>check_circle</mat-icon>Acceso familiar</div>
+        <div class="feature-item"><mat-icon>check_circle</mat-icon>Seguimiento de salud</div>
+        <div class="feature-item"><mat-icon>check_circle</mat-icon>Comunicación con el centro</div>
+        <div class="feature-item"><mat-icon>check_circle</mat-icon>Hasta 3 usuarios</div>
+        <div class="feature-item"><mat-icon>check_circle</mat-icon>Soporte estándar</div>
+      }
+    </div>
+
+    <mat-divider class="divider-dark"></mat-divider>
+
+    <!-- Trust -->
+    <div class="summary-trust">
+      <div class="trust-item">
+        <mat-icon>verified_user</mat-icon>
+        <span>Garantía de 30 días</span>
+      </div>
+      <div class="trust-item">
+        <mat-icon>autorenew</mat-icon>
+        <span>Cancela en cualquier momento</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ── RIGHT: Form ── -->
+  <section class="form-card">
+
+    <!-- Accepted cards -->
+    <div class="accepted-cards">
+      <span class="accepted-label">Aceptamos</span>
+      <div class="cards-row">
+        <span class="card-badge visa-badge">VISA</span>
+        <span class="card-badge mc-badge">MC</span>
+        <span class="card-badge amex-badge">AMEX</span>
+      </div>
+    </div>
+
+    <h2 class="form-title">Datos de pago</h2>
+    <p class="form-subtitle">Tu información está cifrada y protegida</p>
+
+    @if (successMessage) {
+      <div class="alert alert-success">
+        <mat-icon>check_circle</mat-icon>
+        <div>
+          <strong>¡Pago exitoso!</strong>
+          <p>{{ successMessage }}</p>
         </div>
       </div>
+    }
+    @if (errorMessage) {
+      <div class="alert alert-error">
+        <mat-icon>error_outline</mat-icon>
+        <div>
+          <strong>Ocurrió un error</strong>
+          <p>{{ errorMessage }}</p>
+        </div>
+      </div>
+    }
 
-      <!-- Form -->
-      <form [formGroup]="form" (ngSubmit)="submitPayment()" class="payment-form">
+    <!-- Card visual preview -->
+    <div class="card-visual"
+         [class.card-visa]="cardType === 'visa'"
+         [class.card-mc]="cardType === 'mastercard'"
+         [class.card-amex]="cardType === 'amex'">
+      <div class="card-top">
+        <mat-icon class="card-chip-icon">contactless</mat-icon>
+        @if (cardType === 'visa') {
+          <span class="network-label visa-label">VISA</span>
+        } @else if (cardType === 'mastercard') {
+          <mat-icon class="network-icon">toll</mat-icon>
+        } @else {
+          <mat-icon class="network-icon">credit_card</mat-icon>
+        }
+      </div>
+      <div class="card-number-preview">
+        {{ form.get('cardNumber')?.value || '•••• •••• •••• ••••' }}
+      </div>
+      <div class="card-bottom">
+        <div>
+          <div class="card-field-label">TITULAR</div>
+          <div class="card-field-value">{{ (form.get('cardholderName')?.value | uppercase) || 'NOMBRE TITULAR' }}</div>
+        </div>
+        <div>
+          <div class="card-field-label">VENCE</div>
+          <div class="card-field-value">{{ form.get('expiry')?.value || 'MM/AA' }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Form -->
+    <form [formGroup]="form" (ngSubmit)="submitPayment()" class="payment-form">
+
+      <div class="field-group">
+        <label class="field-group-label">Información del titular</label>
 
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Nombre del titular</mat-label>
@@ -94,6 +170,10 @@
             <mat-error>Ingresa el nombre del titular</mat-error>
           }
         </mat-form-field>
+      </div>
+
+      <div class="field-group">
+        <label class="field-group-label">Datos de la tarjeta</label>
 
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Número de tarjeta</mat-label>
@@ -133,20 +213,52 @@
           </mat-form-field>
         </div>
 
-        <div class="form-actions">
-          <button mat-stroked-button type="button" (click)="cancel()">
-            <mat-icon>arrow_back</mat-icon>
-            Cancelar
-          </button>
-          <button mat-flat-button color="primary" type="submit"
-                  [disabled]="isProcessing" class="pay-btn">
-            <mat-icon>lock</mat-icon>
-            {{ isProcessing ? 'Procesando…' : 'Pagar ' + (planPrice | currency:currency) }}
-          </button>
-        </div>
+        <p class="cvc-hint">
+          <mat-icon>help_outline</mat-icon>
+          El CVC son los 3 dígitos al dorso de tu tarjeta (4 para Amex)
+        </p>
+      </div>
 
-      </form>
-    </mat-card-content>
-  </mat-card>
+      <!-- Actions -->
+      <div class="form-actions">
+        <button mat-stroked-button type="button" class="btn-cancel" (click)="cancel()">
+          <mat-icon>arrow_back</mat-icon>
+          Volver
+        </button>
+        <button mat-flat-button type="submit" class="pay-btn"
+                [disabled]="isProcessing">
+          @if (isProcessing) {
+            <mat-spinner diameter="20" color="accent"></mat-spinner>
+            Procesando…
+          } @else {
+            <mat-icon>lock</mat-icon>
+            Pagar {{ planPrice | currency:currency }}
+          }
+        </button>
+      </div>
+
+    </form>
+
+    <!-- Security bar -->
+    <div class="security-bar">
+      <div class="security-item">
+        <mat-icon>lock</mat-icon>
+        <span>SSL 256-bit</span>
+      </div>
+      <div class="security-item">
+        <mat-icon>security</mat-icon>
+        <span>PCI DSS</span>
+      </div>
+      <div class="security-item">
+        <mat-icon>verified_user</mat-icon>
+        <span>3D Secure</span>
+      </div>
+      <div class="security-item">
+        <mat-icon>payments</mat-icon>
+        <span>Powered by Stripe</span>
+      </div>
+    </div>
+
+  </section>
 
 </div>
