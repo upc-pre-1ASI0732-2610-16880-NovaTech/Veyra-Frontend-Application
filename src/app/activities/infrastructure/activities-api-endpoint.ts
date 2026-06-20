@@ -17,9 +17,7 @@ export class ActivitiesApiEndpoint {
 
   create(nursingHomeId: number, body: {
     name: string;
-    activityDate: string;
-    startTime: string;
-    endTime: string;
+    activityPeriod: { activityDate: string; startTime: string; endTime: string };
     area: string;
     residentId: number;
     attendantId: number;
