@@ -1,25 +1,27 @@
-import { SubscriptionResponse } from "../../infrastructure/subscriptions-response";
+import { SubscriptionResponse } from '../../infrastructure/subscriptions-response';
 
 export class Subscription {
   constructor(
-    public subscriptionId: string,
-    public accountId: string,
-    public planId: string,
-    public cycle: "monthly" | "annual",
-    public price: number,
-    public status: "active" | "inactive" | "pending",
-    public createdAt: string
+    public id: number,
+    public userId: number,
+    public planType: string,
+    public period: 'MONTHLY' | 'ANNUALLY',
+    public status: 'ACTIVE' | 'CANCELLED' | 'PAST_DUE',
+    public stripeSubscriptionId: string,
+    public currentPeriodStart: string,
+    public currentPeriodEnd: string
   ) {}
 
   static fromResponse(data: SubscriptionResponse): Subscription {
     return new Subscription(
-      data.subscriptionId,
-      data.accountId,
-      data.planId,
-      data.cycle,
-      data.price,
+      data.id,
+      data.userId,
+      data.planType,
+      data.period,
       data.status,
-      data.createdAt
+      data.stripeSubscriptionId,
+      data.currentPeriodStart,
+      data.currentPeriodEnd
     );
   }
 }
