@@ -82,9 +82,21 @@ export class IamStore {
         this.currentUsernameSignal.set(signInResource.username);
         this.currentUserIdSignal.set(signInResource.id);
 
-        if (signInResource.roles.includes('ROLE_ADMIN')) {
+        const isAdmin = signInResource.roles.some(r =>
+          r === 'ROLE_ADMIN' || r === 'ADMIN' || r.toUpperCase().includes('ADMIN')
+        );
+
+        if (isAdmin) {
           this.paymentsApi.getActiveSubscription(signInResource.id).subscribe({
-            next: () => router.navigate(['/nursing/nursing-homes/new']).then(),
+            next: (sub) => {
+              // Guard against null/empty response (backend returns 200+null for no subscription)
+              if (!sub || !sub.id) {
+                router.navigate(['/payments/choose']).then();
+                return;
+              }
+              const nursingHomeId = localStorage.getItem('nursingHomeId');
+              router.navigate([nursingHomeId ? '/analytics/dashboard' : '/nursing/nursing-homes/new']).then();
+            },
             error: () => router.navigate(['/payments/choose']).then()
           });
         } else {

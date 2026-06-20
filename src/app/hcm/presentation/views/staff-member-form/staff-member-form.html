@@ -8,6 +8,16 @@
       </div>
     }
 
+    @if (store.error()) {
+      <div class="error-banner">
+        <mat-icon>error_outline</mat-icon>
+        <div>
+          <strong>No se pudo guardar el personal</strong>
+          <p>{{ store.error() }}</p>
+        </div>
+      </div>
+    }
+
     <form [formGroup]="form" (ngSubmit)="submit()" class="staff-form">
       <app-person-profile-form
         [personProfileId]="personProfileId">

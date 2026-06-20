@@ -119,13 +119,13 @@ export class StaffMemberForm {
       return;
     }
 
-    if(this.isEdit){
-      this.store.updateStaffMember(this.staffMemberId ?? 0, staffMemberCommand);
-    } else {
-      this.store.addStaffMember(this.nursingHomeId, staffMemberCommand);
-    }
+    const onSuccess = () => this.router.navigate(['/hcm/staff']).then();
 
-    this.router.navigate(['/hcm/staff']).then();
+    if (this.isEdit) {
+      this.store.updateStaffMember(this.staffMemberId ?? 0, staffMemberCommand, onSuccess);
+    } else {
+      this.store.addStaffMember(this.nursingHomeId, staffMemberCommand, onSuccess);
+    }
   }
 
   private formatDateToISO(date: Date): string {
