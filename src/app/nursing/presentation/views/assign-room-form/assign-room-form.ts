@@ -33,8 +33,6 @@ export class AssignRoomForm {
   protected store = inject(NursingStore);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
-  nursingHomeId: number = Number(localStorage.getItem('nursingHomeId'));
-
   residentId: number | null = null;
 
   form = new FormGroup({
@@ -80,7 +78,7 @@ export class AssignRoomForm {
         roomNumber: roomNumber
       });
 
-      this.store.assignRoom(this.nursingHomeId, this.residentId, assignRoomCommand);
+      this.store.assignRoom(this.residentId, assignRoomCommand);
 
       this.router.navigate(['/nursing/residents']).then();
     } else {

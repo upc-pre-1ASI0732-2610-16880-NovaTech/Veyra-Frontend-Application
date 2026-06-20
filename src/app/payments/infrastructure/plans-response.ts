@@ -1,10 +1,18 @@
+export interface PlanPrice {
+  period: 'MONTHLY' | 'ANNUALLY';
+  price: number;
+  currency: string;
+}
+
+export interface PlanFeature {
+  name: string;
+  included: boolean;
+}
+
 export interface PlanResponse {
   id: string;
-  name: "Family Plan" | "Nursing Home Plan";
+  displayName: string;
   description: string;
-  priceMonthly: number;
-  priceAnnual: number;
-  discountAnnual: number;
-  type: "family" | "nursing-home";
-  features: string[];
+  prices: PlanPrice[];
+  features: PlanFeature[];
 }

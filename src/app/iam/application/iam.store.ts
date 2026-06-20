@@ -5,6 +5,8 @@ import { Router } from '@angular/router';
 import { IamApi } from '../infrastructure/iam-api';
 import { SignUpCommand } from '../domain/model/sign-up.command';
 import { CreateAdministratorCommand } from '../domain/model/create-administrator.command';
+import { MfaSetupResource } from '../infrastructure/mfa-api-endpoint';
+import { PaymentsApi } from '../../payments/infrastructure/payments-api';
 
 @Injectable({ providedIn: 'root' })
 export class IamStore {
@@ -14,6 +16,7 @@ export class IamStore {
   private readonly currentUsernameSignal = signal<string | null>(null);
   private readonly currentUserIdSignal = signal<number | null>(null);
   private readonly usersSignal = signal<Array<User>>([]);
+  private readonly mfaSetupDataSignal = signal<MfaSetupResource | null>(null);
 
   readonly isSignedIn = this.isSignedInSignal.asReadonly();
   readonly loadingUsers = signal<boolean>(false);
@@ -24,8 +27,9 @@ export class IamStore {
   readonly loading = this._loadingSignal.asReadonly();
   readonly error = this._errorSignal.asReadonly();
   readonly isLoadingUsers = this.loadingUsers.asReadonly();
+  readonly mfaSetupData = this.mfaSetupDataSignal.asReadonly();
 
-    constructor(private iamApi: IamApi) {
+    constructor(private iamApi: IamApi, private paymentsApi: PaymentsApi) {
       const token = localStorage.getItem('token');
       const userId = localStorage.getItem('userId');
       const username = localStorage.getItem('username'); // Recuperamos el username también
@@ -62,19 +66,27 @@ export class IamStore {
   }
 
   signIn(signInCommand: SignInCommand, router: Router) {
-    console.log(signInCommand);
     this.iamApi.signIn(signInCommand).subscribe({
       next: (signInResource) => {
+        if (signInResource.mfaRequired) {
+          localStorage.setItem('mfa_pending_user_id', signInResource.id.toString());
+          router.navigate(['/iam/mfa-verify']).then();
+          return;
+        }
+
         localStorage.setItem('token', signInResource.token);
         localStorage.setItem('userId', signInResource.id.toString());
-        localStorage.setItem('username', signInResource.username); // <-- ¡Agrega esta línea!
+        localStorage.setItem('username', signInResource.username);
 
         this.isSignedInSignal.set(true);
         this.currentUsernameSignal.set(signInResource.username);
         this.currentUserIdSignal.set(signInResource.id);
 
-        if(signInResource.roles.includes("ROLE_ADMIN")) {
-          router.navigate(['/nursing/nursing-homes/new']).then();
+        if (signInResource.roles.includes('ROLE_ADMIN')) {
+          this.paymentsApi.getActiveSubscription(signInResource.id).subscribe({
+            next: () => router.navigate(['/nursing/nursing-homes/new']).then(),
+            error: () => router.navigate(['/payments/choose']).then()
+          });
         } else {
           router.navigate(['/analytics/dashboard']).then();
         }
@@ -85,6 +97,75 @@ export class IamStore {
         this.currentUsernameSignal.set(null);
         this.currentUserIdSignal.set(null);
         router.navigate(['/iam/sign-in']).then();
+      }
+    });
+  }
+
+  verifyMfa(code: string, router: Router) {
+    const userId = Number(localStorage.getItem('mfa_pending_user_id'));
+    if (!userId) {
+      router.navigate(['/iam/sign-in']).then();
+      return;
+    }
+    this._loadingSignal.set(true);
+    this._errorSignal.set(null);
+    this.iamApi.mfaVerify(userId, code).subscribe({
+      next: (res) => {
+        localStorage.removeItem('mfa_pending_user_id');
+        localStorage.setItem('token', res.token);
+        this.isSignedInSignal.set(true);
+        this._loadingSignal.set(false);
+        router.navigate(['/analytics/dashboard']).then();
+      },
+      error: (err) => {
+        this._errorSignal.set('Invalid TOTP code. Please try again.');
+        this._loadingSignal.set(false);
+      }
+    });
+  }
+
+  setupMfa() {
+    this._loadingSignal.set(true);
+    this._errorSignal.set(null);
+    this.iamApi.mfaSetup().subscribe({
+      next: (res) => {
+        this.mfaSetupDataSignal.set(res);
+        this._loadingSignal.set(false);
+      },
+      error: () => {
+        this._errorSignal.set('Failed to initiate MFA setup.');
+        this._loadingSignal.set(false);
+      }
+    });
+  }
+
+  enableMfa(code: string, router: Router) {
+    this._loadingSignal.set(true);
+    this._errorSignal.set(null);
+    this.iamApi.mfaEnable(code).subscribe({
+      next: () => {
+        this.mfaSetupDataSignal.set(null);
+        this._loadingSignal.set(false);
+        router.navigate(['/analytics/dashboard']).then();
+      },
+      error: () => {
+        this._errorSignal.set('Invalid code. MFA not activated.');
+        this._loadingSignal.set(false);
+      }
+    });
+  }
+
+  disableMfa(router: Router) {
+    this._loadingSignal.set(true);
+    this._errorSignal.set(null);
+    this.iamApi.mfaDisable().subscribe({
+      next: () => {
+        this._loadingSignal.set(false);
+        router.navigate(['/analytics/dashboard']).then();
+      },
+      error: () => {
+        this._errorSignal.set('Failed to disable MFA.');
+        this._loadingSignal.set(false);
       }
     });
   }

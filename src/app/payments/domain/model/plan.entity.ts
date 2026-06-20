@@ -1,27 +1,27 @@
-import { PlanResponse } from "../../infrastructure/plans-response";
+import { PlanResponse, PlanFeature, PlanPrice } from '../../infrastructure/plans-response';
 
 export class Plan {
   constructor(
     public id: string,
-    public name: string,
+    public displayName: string,
     public description: string,
-    public priceMonthly: number,
-    public priceAnnual: number,
-    public discountAnnual: number,
-    public type: "family" | "nursing-home",
-    public features: string[]
+    public prices: PlanPrice[],
+    public features: PlanFeature[]
   ) {}
 
+  get monthlyPrice(): number {
+    return this.prices.find(p => p.period === 'MONTHLY')?.price ?? 0;
+  }
+
+  get annualPrice(): number {
+    return this.prices.find(p => p.period === 'ANNUALLY')?.price ?? 0;
+  }
+
+  get currency(): string {
+    return this.prices[0]?.currency ?? 'USD';
+  }
+
   static fromResponse(data: PlanResponse): Plan {
-    return new Plan(
-      data.id,
-      data.name,
-      data.description,
-      data.priceMonthly,
-      data.priceAnnual,
-      data.discountAnnual,
-      data.type,
-      data.features
-    );
+    return new Plan(data.id, data.displayName, data.description, data.prices, data.features);
   }
 }

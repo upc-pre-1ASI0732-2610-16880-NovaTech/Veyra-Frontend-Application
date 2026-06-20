@@ -1,0 +1,51 @@
+<div class="question-list-container">
+  <h2>Family Questions</h2>
+
+  @if (store.loading()) {
+    <p class="info">Loading questions…</p>
+  }
+
+  @if (store.error()) {
+    <div class="error-banner">{{ store.error() }}</div>
+  }
+
+  @if (!store.loading() && store.questions().length === 0) {
+    <p class="info">No questions from families yet.</p>
+  }
+
+  <div class="question-cards">
+    @for (q of store.questions(); track q.id) {
+      <div class="question-card" [class.answered]="q.status === 'ANSWERED'">
+        <div class="question-meta">
+          <span class="status-badge" [class.pending]="q.status === 'PENDING'" [class.answered]="q.status === 'ANSWERED'">
+            {{ q.status }}
+          </span>
+          <span class="date">{{ q.createdAt | date:'short' }}</span>
+        </div>
+
+        <div class="question-body">{{ q.body }}</div>
+
+        @if (q.answer) {
+          <div class="answer-block">
+            <strong>Answer:</strong>
+            <p>{{ q.answer }}</p>
+          </div>
+        }
+
+        @if (q.status === 'PENDING') {
+          <div class="answer-form">
+            <textarea
+              placeholder="Write your answer…"
+              [value]="answerTexts()[q.id] || ''"
+              (input)="setAnswer(q.id, $any($event.target).value)"
+              rows="3"
+            ></textarea>
+            <button (click)="submitAnswer(q.id)" [disabled]="!answerTexts()[q.id]?.trim()">
+              Submit Answer
+            </button>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>

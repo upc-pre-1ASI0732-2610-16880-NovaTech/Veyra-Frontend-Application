@@ -1,70 +1,152 @@
-<div class="checkout-container">
+<div class="checkout-wrapper">
 
-  <!-- LEFT SIDE: PAYMENT FORM -->
-  <div class="checkout-card form-card">
-    <h2 class="section-title">Payment Information</h2>
+  <!-- Summary sidebar -->
+  <mat-card class="summary-card">
+    <mat-card-header>
+      <div mat-card-avatar class="summary-avatar">
+        <mat-icon>receipt_long</mat-icon>
+      </div>
+      <mat-card-title>{{ 'payments.checkout.summary' | translate }}</mat-card-title>
+      <mat-card-subtitle class="subtitle-white">{{ planTitle }}</mat-card-subtitle>
+    </mat-card-header>
 
-    <form [formGroup]="stripeForm" (ngSubmit)="submitPayment()">
+    <mat-card-content>
+      <div class="summary-row">
+        <span>{{ 'payments.checkout.billing' | translate }}</span>
+        <span class="summary-value">
+          {{ period === 'MONTHLY' ? ('payments.monthly' | translate) : ('payments.annually' | translate) }}
+        </span>
+      </div>
+      <mat-divider class="divider-white"></mat-divider>
+      <div class="summary-row total-row">
+        <span>{{ 'payments.checkout.total' | translate }}</span>
+        <span class="total-amount">{{ planPrice | currency:currency }}</span>
+      </div>
+    </mat-card-content>
 
-      <label class="form-label">Full Name</label>
-      <input class="form-input" type="text" formControlName="fullName">
+    <mat-card-footer class="trust-footer">
+      <mat-icon>lock</mat-icon>
+      <span>Pago seguro · SSL cifrado</span>
+    </mat-card-footer>
+  </mat-card>
 
-      <label class="form-label">Email</label>
-      <input class="form-input" type="email" formControlName="email">
+  <!-- Form card -->
+  <mat-card class="form-card">
+    <mat-card-header>
+      <mat-card-title>{{ 'payments.checkout.title' | translate }}</mat-card-title>
+      <mat-card-subtitle>Ingresa los datos de tu tarjeta</mat-card-subtitle>
+    </mat-card-header>
 
-      <label class="form-label">Phone</label>
-      <input class="form-input" type="text" formControlName="phone">
+    <mat-card-content>
 
-      <label class="form-label">Card Number</label>
-      <input class="form-input" type="text" formControlName="cardNumber" placeholder="1234 5678 9012 3456">
-
-      <div class="row">
-        <div class="col">
-          <label class="form-label">Exp. Month</label>
-          <input class="form-input" type="text" formControlName="expMonth" placeholder="MM">
+      @if (successMessage) {
+        <div class="alert alert-success">
+          <mat-icon>check_circle</mat-icon>
+          {{ successMessage }}
         </div>
-
-        <div class="col">
-          <label class="form-label">Exp. Year</label>
-          <input class="form-input" type="text" formControlName="expYear" placeholder="YY">
+      }
+      @if (errorMessage) {
+        <div class="alert alert-error">
+          <mat-icon>error</mat-icon>
+          {{ errorMessage }}
         </div>
+      }
 
-        <div class="col">
-          <label class="form-label">CVC</label>
-          <input class="form-input" type="text" formControlName="cvc" placeholder="123">
+      <!-- Card visual preview -->
+      <div class="card-visual"
+           [class.card-visa]="cardType === 'visa'"
+           [class.card-mc]="cardType === 'mastercard'"
+           [class.card-amex]="cardType === 'amex'">
+        <div class="card-top">
+          <mat-icon class="card-chip-icon">contactless</mat-icon>
+          @if (cardType === 'visa') {
+            <span class="network-label visa-label">VISA</span>
+          } @else if (cardType === 'mastercard') {
+            <mat-icon class="network-icon">toll</mat-icon>
+          } @else {
+            <mat-icon class="network-icon">credit_card</mat-icon>
+          }
+        </div>
+        <div class="card-number-preview">
+          {{ form.get('cardNumber')?.value || '•••• •••• •••• ••••' }}
+        </div>
+        <div class="card-bottom">
+          <div>
+            <div class="card-field-label">TITULAR</div>
+            <div class="card-field-value">{{ (form.get('cardholderName')?.value | uppercase) || 'NOMBRE TITULAR' }}</div>
+          </div>
+          <div>
+            <div class="card-field-label">VENCE</div>
+            <div class="card-field-value">{{ form.get('expiry')?.value || 'MM/AA' }}</div>
+          </div>
         </div>
       </div>
 
-      <p class="error-text" *ngIf="error">{{ error }}</p>
+      <!-- Form -->
+      <form [formGroup]="form" (ngSubmit)="submitPayment()" class="payment-form">
 
-      <button class="pay-button" type="submit">
-        Pay {{ planPrice | currency:'USD' }}
-      </button>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Nombre del titular</mat-label>
+          <input matInput formControlName="cardholderName"
+                 placeholder="Juan García" autocomplete="cc-name" />
+          <mat-icon matSuffix>person</mat-icon>
+          @if (form.get('cardholderName')?.invalid && form.get('cardholderName')?.touched) {
+            <mat-error>Ingresa el nombre del titular</mat-error>
+          }
+        </mat-form-field>
 
-      <button class="cancel-button" type="button" (click)="cancel()">
-        Cancel
-      </button>
-    </form>
-  </div>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Número de tarjeta</mat-label>
+          <input matInput formControlName="cardNumber"
+                 placeholder="1234 5678 9012 3456"
+                 autocomplete="cc-number" inputmode="numeric" maxlength="19"
+                 (input)="onCardNumberInput($event)" />
+          <mat-icon matSuffix>credit_card</mat-icon>
+          @if (form.get('cardNumber')?.invalid && form.get('cardNumber')?.touched) {
+            <mat-error>Ingresa un número de tarjeta válido</mat-error>
+          }
+        </mat-form-field>
 
-  <!-- RIGHT SIDE: SUMMARY -->
-  <div class="checkout-card summary-card">
-    <h2 class="section-title">Order Summary</h2>
+        <div class="row-two">
+          <mat-form-field appearance="outline">
+            <mat-label>Vencimiento (MM/AA)</mat-label>
+            <input matInput formControlName="expiry"
+                   placeholder="12/26" autocomplete="cc-exp"
+                   inputmode="numeric" maxlength="5"
+                   (input)="onExpiryInput($event)" />
+            <mat-icon matSuffix>event</mat-icon>
+            @if (form.get('expiry')?.invalid && form.get('expiry')?.touched) {
+              <mat-error>Formato MM/AA</mat-error>
+            }
+          </mat-form-field>
 
-    <div class="summary-item">
-      <span class="label">Plan:</span>
-      <span class="value">{{ planTitle }}</span>
-    </div>
+          <mat-form-field appearance="outline">
+            <mat-label>CVC</mat-label>
+            <input matInput formControlName="cvc"
+                   placeholder="123" autocomplete="cc-csc"
+                   inputmode="numeric" maxlength="4"
+                   (input)="onCvcInput($event)" />
+            <mat-icon matSuffix>lock</mat-icon>
+            @if (form.get('cvc')?.invalid && form.get('cvc')?.touched) {
+              <mat-error>CVC inválido</mat-error>
+            }
+          </mat-form-field>
+        </div>
 
-    <div class="summary-item">
-      <span class="label">Billing Cycle:</span>
-      <span class="value text-capitalize">{{ period }}</span>
-    </div>
+        <div class="form-actions">
+          <button mat-stroked-button type="button" (click)="cancel()">
+            <mat-icon>arrow_back</mat-icon>
+            Cancelar
+          </button>
+          <button mat-flat-button color="primary" type="submit"
+                  [disabled]="isProcessing" class="pay-btn">
+            <mat-icon>lock</mat-icon>
+            {{ isProcessing ? 'Procesando…' : 'Pagar ' + (planPrice | currency:currency) }}
+          </button>
+        </div>
 
-    <div class="summary-item total">
-      <span class="label">Total:</span>
-      <span class="value">{{ planPrice | currency:'USD' }}</span>
-    </div>
-  </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
 
 </div>

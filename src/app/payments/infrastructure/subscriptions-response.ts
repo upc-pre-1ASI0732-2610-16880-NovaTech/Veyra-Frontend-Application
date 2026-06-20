@@ -1,9 +1,13 @@
 export interface SubscriptionResponse {
-  subscriptionId: string;
-  accountId: string;
-  planId: string;
-  cycle: "monthly" | "annual";
-  price: number;
-  status: "active" | "inactive" | "pending";
+  id: number;
+  userId: number;
+  stripeSubscriptionId: string;
+  planType: string;
+  period: 'MONTHLY' | 'ANNUALLY';
+  amount: number;
+  currency: string;
+  status: 'ACTIVE' | 'PAST_DUE' | 'CANCELED' | 'INCOMPLETE' | 'INCOMPLETE_EXPIRED' | 'TRIALING' | 'UNPAID';
+  currentPeriodStart: string;
+  currentPeriodEnd: string;
   createdAt: string;
 }

@@ -1,0 +1,33 @@
+<div class="mfa-verify-container">
+  <div class="mfa-verify-card">
+    <h2>Two-Factor Authentication</h2>
+    <p>Enter the 6-digit code from your authenticator app.</p>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <div class="form-field">
+        <label for="code">TOTP Code</label>
+        <input
+          id="code"
+          type="text"
+          formControlName="code"
+          placeholder="000000"
+          maxlength="6"
+          autocomplete="one-time-code"
+        />
+        @if (form.get('code')?.invalid && form.get('code')?.touched) {
+          <span class="error">Enter the 6-digit code from your authenticator app.</span>
+        }
+      </div>
+
+      @if (store.error()) {
+        <div class="error-banner">{{ store.error() }}</div>
+      }
+
+      <button type="submit" [disabled]="store.loading()">
+        {{ store.loading() ? 'Verifying…' : 'Verify' }}
+      </button>
+    </form>
+
+    <button class="back-link" (click)="goBackToSignIn()">Back to Sign In</button>
+  </div>
+</div>

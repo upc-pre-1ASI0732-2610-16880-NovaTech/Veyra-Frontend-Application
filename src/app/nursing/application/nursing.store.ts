@@ -219,10 +219,10 @@ export class NursingStore {
     });
   }
 
-  assignRoom(nursingHomeId: number, residentId: number, assignRoomCommand: AssignRoomCommand): void {
+  assignRoom(residentId: number, assignRoomCommand: AssignRoomCommand): void {
     this._loadingSignal.set(true);
     this._errorSignal.set(null);
-    this.nursingApi.assignRoomToResident(nursingHomeId, residentId, assignRoomCommand).pipe(retry(2)).subscribe({
+    this.nursingApi.assignRoomToResident(residentId, assignRoomCommand).pipe(retry(2)).subscribe({
       next: updatedResident => {
         this._residentSignal.update(residents =>
           residents.map(res => res.id === updatedResident.id ? updatedResident : res));

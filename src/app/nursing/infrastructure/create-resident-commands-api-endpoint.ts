@@ -43,11 +43,11 @@ export class CreateResidentCommandsApiEndpoint extends ErrorHandlingEnabledBaseT
     );
   }
 
-  /** PUT: /api/v1/residents/{residentId} */
+  /** PATCH: /api/v1/residents/{residentId} */
   update(residentId: number, createResidentCommand: CreateResidentCommand): Observable<Resident> {
     const resource = this.residentCommandAssembler.toResourceFromEntity(createResidentCommand);
     const url = residentsEndpointUrl + `/${residentId}`
-    return this.http.put<Resident>(url, resource).pipe(
+    return this.http.patch<Resident>(url, resource).pipe(
       map(updatedResident => this.residentAssembler.toEntityFromResource(updatedResident)),
       catchError(this.handleError('Failed to update resident'))
     );

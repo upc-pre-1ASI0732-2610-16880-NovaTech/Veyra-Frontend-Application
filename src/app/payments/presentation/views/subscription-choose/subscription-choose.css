@@ -1,98 +1,186 @@
-.choose-container {
+.choose-wrapper {
   min-height: 100vh;
-  padding: 40px 20px;
-  background: linear-gradient(
-    to bottom,
-    rgba(255, 255, 255, 0.85),
-    rgba(112, 177, 230, 0.35)
-  ),
-  radial-gradient(
-    circle at top left,
-    #70b1e6 0%,
-    #fff 60%
-  );
-  background-size: cover;
-  background-position: center;
+  padding: 56px 24px 48px;
+  background: linear-gradient(160deg, #e8eaf6 0%, #f8f9fa 45%, #e8f5e9 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Hero */
+.hero {
   text-align: center;
+  margin-bottom: 48px;
 }
 
-/* Title */
-.title {
-  font-size: 2.4rem;
-  color: #0d2e73;
-  font-weight: 700;
-  margin-bottom: 40px;
+.hero-title {
+  font-size: 2.75rem;
+  font-weight: 800;
+  color: #1a237e;
+  margin: 0 0 14px;
+  letter-spacing: -0.5px;
 }
 
-.subtitle {
+.hero-subtitle {
   font-size: 1.1rem;
-  color: #0d2e73;
-  opacity: 0.8;
-  margin-bottom: 50px;
+  color: #546e7a;
+  margin: 0;
+  max-width: 480px;
+}
+
+.loading-center {
+  display: flex;
+  justify-content: center;
+  margin: 32px 0;
 }
 
 /* Grid */
 .plans-grid {
-  display: flex;
-  justify-content: center;
-  gap: 30px;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+  max-width: 900px;
+  width: 100%;
 }
 
-/* Plan card */
+/* Plan cards */
 .plan-card {
-  width: 280px;
-  padding: 25px;
-  border-radius: 18px;
-  background: #fff;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-  transition: transform .2s;
-  border-top: 6px solid #12a18d;
+  position: relative;
+  border-radius: 20px !important;
+  overflow: visible !important;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  padding-bottom: 8px;
 }
 
 .plan-card:hover {
-  transform: translateY(-6px);
+  transform: translateY(-8px);
+  box-shadow: 0 24px 48px rgba(0,0,0,0.13) !important;
 }
 
-.plan-card h2 {
-  color: #0d2e73;
+/* Recommended badge */
+.popular-badge {
+  position: absolute;
+  top: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #00897b;
+  color: white;
+  padding: 5px 18px;
+  border-radius: 20px;
+  font-size: 12px;
   font-weight: 700;
-  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+  z-index: 2;
+  box-shadow: 0 4px 12px rgba(0,137,123,0.35);
 }
+
+.popular-badge mat-icon { font-size: 14px; width: 14px; height: 14px; }
+
+/* Avatar icons */
+.avatar {
+  width: 48px !important;
+  height: 48px !important;
+  border-radius: 14px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.family-avatar  { background: #e3f2fd !important; color: #1565c0; }
+.nursing-avatar { background: #e8f5e9 !important; color: #2e7d32; }
 
 /* Pricing */
-.price {
-  font-size: 1.8rem;
-  font-weight: bold;
-  color: #12a18d;
-  margin: 8px 0;
+.price-block {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin: 18px 0 6px;
 }
 
-.price span {
-  font-size: 0.9rem;
-  color: #0d2e73;
+.price-main   { font-size: 2.4rem; font-weight: 800; }
+.family-price { color: #1a237e; }
+.nursing-price { color: #1b5e20; }
+
+.price-period { font-size: 14px; color: #90a4ae; }
+
+.price-annual {
+  font-size: 13px;
+  color: #78909c;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-.yearly {
-  font-size: 1.3rem;
-  color: #0d2e73;
+.savings-tag {
+  background: #e8f5e9;
+  color: #2e7d32;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 12px;
 }
 
-/* Button */
-.details-btn {
-  margin-top: 20px;
-  padding: 12px 18px;
+.plan-divider { margin: 14px 0 18px !important; }
+
+/* Features */
+.feature-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: #37474f;
+  line-height: 1.4;
+}
+
+.check-icon   { font-size: 18px; width: 18px; height: 18px; flex-shrink: 0; }
+.family-check { color: #1565c0; }
+.nursing-check { color: #2e7d32; }
+
+/* Actions */
+.plan-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px 16px 8px !important;
+}
+
+.plan-btn {
   width: 100%;
-  border: none;
-  border-radius: 10px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  color: #fff;
-  background: #12a18d;
-  transition: background 0.2s;
+  height: 46px;
+  display: flex !important;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+  font-weight: 600 !important;
 }
 
-.details-btn:hover {
-  background: #0d2e73;
+/* Trust bar */
+.trust-note {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #90a4ae;
+  font-size: 13px;
+  margin-top: 36px;
+}
+
+.trust-note mat-icon { font-size: 18px; width: 18px; height: 18px; color: #1565c0; }
+
+@media (max-width: 700px) {
+  .plans-grid  { grid-template-columns: 1fr; max-width: 420px; }
+  .hero-title  { font-size: 2rem; }
+  .nursing-card { margin-top: 20px; }
 }

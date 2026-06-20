@@ -1,84 +1,115 @@
-import { PaymentsApi } from "../infrastructure/payments-api";
-import { Plan } from "../domain/model/plan.entity";
-import { Account } from "../domain/model/account.entity";
-import { Subscription } from "../domain/model/subscription.entity";
+import { Injectable, signal } from '@angular/core';
+import { PaymentsApi } from '../infrastructure/payments-api';
+import { Plan } from '../domain/model/plan.entity';
+import { Subscription } from '../domain/model/subscription.entity';
 
+@Injectable({ providedIn: 'root' })
 export class PaymentStore {
-  private api = new PaymentsApi();
+  private readonly _plansSignal = signal<Plan[]>([]);
+  private readonly _selectedPlanSignal = signal<Plan | null>(null);
+  private readonly _billingCycleSignal = signal<'MONTHLY' | 'ANNUALLY'>('MONTHLY');
+  private readonly _subscriptionSignal = signal<Subscription | null>(null);
+  private readonly _loadingSignal = signal<boolean>(false);
+  private readonly _errorSignal = signal<string | null>(null);
 
-  plans: Plan[] = [];
-  selectedPlan: Plan | null = null;
-  billingCycle: "monthly" | "annual" = "monthly";
+  readonly plans = this._plansSignal.asReadonly();
+  readonly selectedPlan = this._selectedPlanSignal.asReadonly();
+  readonly billingCycle = this._billingCycleSignal.asReadonly();
+  readonly subscription = this._subscriptionSignal.asReadonly();
+  readonly loading = this._loadingSignal.asReadonly();
+  readonly error = this._errorSignal.asReadonly();
 
-  account: Account | null = null;
-  subscription: Subscription | null = null;
+  constructor(private api: PaymentsApi) {}
 
-  isLoading = false;
-  error: string | null = null;
-
-  async loadPlans() {
-    this.isLoading = true;
-    this.error = null;
-
-    try {
-      const data = await this.api.getAvailablePlans();
-      this.plans = data.map((p) => Plan.fromResponse(p));
-    } catch (e: any) {
-      this.error = e.message;
-    } finally {
-      this.isLoading = false;
-    }
+  loadPlans(): void {
+    this._loadingSignal.set(true);
+    this._errorSignal.set(null);
+    this.api.getPlans().subscribe({
+      next: (data) => {
+        this._plansSignal.set(data.map(p => Plan.fromResponse(p)));
+        this._loadingSignal.set(false);
+      },
+      error: (e) => {
+        this._errorSignal.set(e.message ?? 'Failed to load plans.');
+        this._loadingSignal.set(false);
+      }
+    });
   }
 
-  selectPlan(plan: Plan) {
-    this.selectedPlan = plan;
+  selectPlan(plan: Plan): void {
+    this._selectedPlanSignal.set(plan);
   }
 
-  setBillingCycle(cycle: "monthly" | "annual") {
-    this.billingCycle = cycle;
+  setBillingCycle(cycle: 'MONTHLY' | 'ANNUALLY'): void {
+    this._billingCycleSignal.set(cycle);
   }
 
-  async createAccount(payload: {
-    fullName: string;
-    email: string;
-    phone: string;
-    country: string;
-    role: "family" | "nursing-home";
-  }) {
-    this.isLoading = true;
-    this.error = null;
+  createSubscription(
+    paymentMethodId: string,
+    planType?: string,
+    period?: 'MONTHLY' | 'ANNUALLY',
+    onSuccess?: () => void,
+    onError?: (msg: string) => void
+  ): void {
+    const userId = Number(localStorage.getItem('userId'));
+    const resolvedPlanType = planType ?? this._selectedPlanSignal()?.id;
+    const resolvedPeriod = period ?? this._billingCycleSignal();
 
-    try {
-      const response = await this.api.createAccount(payload);
-      this.account = Account.fromResponse(response);
-    } catch (e: any) {
-      this.error = e.message;
-    } finally {
-      this.isLoading = false;
-    }
-  }
-
-  async createSubscription() {
-    if (!this.account || !this.selectedPlan) {
-      this.error = "No account or plan selected.";
+    if (!resolvedPlanType || !userId) {
+      onError?.('No se pudo determinar el plan o el usuario.');
       return;
     }
 
-    this.isLoading = true;
-    this.error = null;
+    this._loadingSignal.set(true);
+    this._errorSignal.set(null);
+    this.api.createSubscription(userId, resolvedPlanType, resolvedPeriod, paymentMethodId).subscribe({
+      next: (res) => {
+        this._subscriptionSignal.set(Subscription.fromResponse(res));
+        this._loadingSignal.set(false);
+        onSuccess?.();
+      },
+      error: (e) => {
+        const msg = e.message ?? 'Failed to create subscription.';
+        this._errorSignal.set(msg);
+        this._loadingSignal.set(false);
+        onError?.(msg);
+      }
+    });
+  }
 
-    try {
-      const response = await this.api.createSubscription({
-        accountId: this.account.id,
-        planId: this.selectedPlan.id,
-        cycle: this.billingCycle,
-      });
+  loadActiveSubscription(): void {
+    const userId = Number(localStorage.getItem('userId'));
+    if (!userId) return;
+    this._loadingSignal.set(true);
+    this.api.getActiveSubscription(userId).subscribe({
+      next: (res) => {
+        this._subscriptionSignal.set(Subscription.fromResponse(res));
+        this._loadingSignal.set(false);
+      },
+      error: () => {
+        this._subscriptionSignal.set(null);
+        this._loadingSignal.set(false);
+      }
+    });
+  }
 
-      this.subscription = Subscription.fromResponse(response);
-    } catch (e: any) {
-      this.error = e.message;
-    } finally {
-      this.isLoading = false;
-    }
+  cancelSubscription(onSuccess?: () => void): void {
+    const userId = Number(localStorage.getItem('userId'));
+    const sub = this._subscriptionSignal();
+    if (!userId || !sub) return;
+    this._loadingSignal.set(true);
+    this.api.cancelSubscription(userId, sub.id).subscribe({
+      next: () => {
+        this._subscriptionSignal.update(s =>
+          s ? Subscription.fromResponse({ ...s, status: 'CANCELED' } as any) : null
+        );
+        this._loadingSignal.set(false);
+        onSuccess?.();
+      },
+      error: (e) => {
+        this._errorSignal.set(e.message ?? 'Failed to cancel subscription.');
+        this._loadingSignal.set(false);
+      }
+    });
   }
 }
