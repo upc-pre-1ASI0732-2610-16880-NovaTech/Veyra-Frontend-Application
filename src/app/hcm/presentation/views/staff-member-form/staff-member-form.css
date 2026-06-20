@@ -3,6 +3,38 @@
   background-color: transparent;
 }
 
+/* Error banner */
+.error-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 16px 20px;
+  margin-bottom: 24px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-left: 4px solid #ef4444;
+  border-radius: 12px;
+  color: #991b1b;
+}
+
+.error-banner mat-icon {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: #ef4444;
+}
+
+.error-banner strong {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.error-banner p {
+  margin: 4px 0 0;
+  font-size: 0.85rem;
+  opacity: 0.9;
+}
+
 .title {
   padding-bottom: 12px;
   border-bottom: 4px solid #66B3AD;

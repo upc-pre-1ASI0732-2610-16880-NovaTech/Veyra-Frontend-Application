@@ -1,4 +1,5 @@
 import { Injectable, signal } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { PaymentsApi } from '../infrastructure/payments-api';
 import { Plan } from '../domain/model/plan.entity';
 import { Subscription } from '../domain/model/subscription.entity';
@@ -68,8 +69,8 @@ export class PaymentStore {
         this._loadingSignal.set(false);
         onSuccess?.();
       },
-      error: (e) => {
-        const msg = e.message ?? 'Failed to create subscription.';
+      error: (e: HttpErrorResponse) => {
+        const msg = this.extractErrorMessage(e);
         this._errorSignal.set(msg);
         this._loadingSignal.set(false);
         onError?.(msg);
@@ -105,8 +106,8 @@ export class PaymentStore {
         this._loadingSignal.set(false);
         onSuccess?.();
       },
-      error: (e) => {
-        const msg = e.message ?? 'Failed to update subscription.';
+      error: (e: HttpErrorResponse) => {
+        const msg = this.extractErrorMessage(e);
         this._errorSignal.set(msg);
         this._loadingSignal.set(false);
         onError?.(msg);
@@ -127,10 +128,24 @@ export class PaymentStore {
         this._loadingSignal.set(false);
         onSuccess?.();
       },
-      error: (e) => {
-        this._errorSignal.set(e.message ?? 'Failed to cancel subscription.');
+      error: (e: HttpErrorResponse) => {
+        this._errorSignal.set(this.extractErrorMessage(e));
         this._loadingSignal.set(false);
       }
     });
+  }
+
+  private extractErrorMessage(e: HttpErrorResponse): string {
+    if (e.status === 0) {
+      return 'No se pudo conectar con el servidor. Verifica tu conexión a internet.';
+    }
+    if (typeof e.error === 'string' && e.error.length) return e.error;
+    if (e.error?.message) return e.error.message;
+    if (e.error?.detail) return e.error.detail;
+    if (e.status === 400) return 'Solicitud inválida. Verifica los datos ingresados.';
+    if (e.status === 402) return 'Pago requerido. Verifica los datos de tu tarjeta.';
+    if (e.status === 409) return 'Ya tienes una suscripción activa.';
+    if (e.status >= 500) return 'Error del servidor. Intenta nuevamente en unos minutos.';
+    return e.message ?? 'Ocurrió un error inesperado.';
   }
 }
