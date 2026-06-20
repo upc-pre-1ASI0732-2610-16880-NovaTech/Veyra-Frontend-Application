@@ -1,39 +1,136 @@
-<div class="choose-container">
+<div class="choose-wrapper">
 
-  <h1 class="title">
-    Choose the right plan for your care needs
-  </h1>
+  <!-- Hero -->
+  <div class="hero">
+    <h1 class="hero-title">Elige tu plan</h1>
+    <p class="hero-subtitle">Planes flexibles para familias y centros de cuidado institucional.</p>
+  </div>
 
-  <p class="subtitle">
-    Select between monthly or yearly plans designed for Families and Nursing Homes.
-  </p>
+  @if (store.loading()) {
+    <div class="loading-center">
+      <mat-progress-spinner mode="indeterminate" diameter="48" color="primary"></mat-progress-spinner>
+    </div>
+  }
 
   <div class="plans-grid">
 
-    <!-- FAMILY PLAN -->
-    <div class="plan-card">
-      <h2>Family Plan</h2>
-      <p class="price">$30 <span>/ month</span></p>
-      <p class="price yearly">$300 <span>/ year (15% OFF)</span></p>
+    <!-- Family Plan -->
+    <mat-card class="plan-card family-card">
+      <mat-card-header>
+        <div mat-card-avatar class="avatar family-avatar">
+          <mat-icon>family_restroom</mat-icon>
+        </div>
+        <mat-card-title>Plan Familia</mat-card-title>
+        <mat-card-subtitle>Para familiares de residentes</mat-card-subtitle>
+      </mat-card-header>
 
-      <button class="details-btn"
-              onclick="window.location.href='/payments/plans/family'">
-        View details
-      </button>
-    </div>
+      <mat-card-content>
+        <div class="price-block">
+          <span class="price-main family-price">
+            {{ (familyPlan?.monthlyPrice ?? 30) | currency:(familyPlan?.currency ?? 'USD') }}
+          </span>
+          <span class="price-period">/mes</span>
+        </div>
+        <div class="price-annual">
+          o {{ (familyPlan?.annualPrice ?? 300) | currency:(familyPlan?.currency ?? 'USD') }}/año
+          <span class="savings-tag">15% OFF</span>
+        </div>
 
-    <!-- NURSING HOME PLAN -->
-    <div class="plan-card">
-      <h2>Nursing Home Plan</h2>
-      <p class="price">$300 <span>/ month</span></p>
-      <p class="price yearly">$3000 <span>/ year (15% OFF)</span></p>
+        <mat-divider class="plan-divider"></mat-divider>
 
-      <button class="details-btn"
-              onclick="window.location.href='/payments/plans/nursing-home'">
-        View details
-      </button>
-    </div>
+        <ul class="feature-list">
+          @for (f of (familyPlan?.features ?? []); track f.name) {
+            @if (f.included) {
+              <li class="feature-item">
+                <mat-icon class="check-icon family-check">check_circle</mat-icon>
+                <span>{{ f.name }}</span>
+              </li>
+            }
+          }
+          @if (!familyPlan) {
+            <li class="feature-item"><mat-icon class="check-icon family-check">check_circle</mat-icon><span>Portal familiar</span></li>
+            <li class="feature-item"><mat-icon class="check-icon family-check">check_circle</mat-icon><span>Notificaciones en tiempo real</span></li>
+            <li class="feature-item"><mat-icon class="check-icon family-check">check_circle</mat-icon><span>Historial del residente</span></li>
+          }
+        </ul>
+      </mat-card-content>
+
+      <mat-card-actions class="plan-actions">
+        <button mat-stroked-button color="primary" (click)="choosePlan('family', 'monthly')" class="plan-btn">
+          <mat-icon>calendar_today</mat-icon>
+          Mensual
+        </button>
+        <button mat-flat-button color="primary" (click)="choosePlan('family', 'annual')" class="plan-btn">
+          <mat-icon>event_available</mat-icon>
+          Anual — Ahorra 15%
+        </button>
+      </mat-card-actions>
+    </mat-card>
+
+    <!-- Nursing Home Plan -->
+    <mat-card class="plan-card nursing-card">
+      <div class="popular-badge">
+        <mat-icon>star</mat-icon>
+        Recomendado
+      </div>
+      <mat-card-header>
+        <div mat-card-avatar class="avatar nursing-avatar">
+          <mat-icon>local_hospital</mat-icon>
+        </div>
+        <mat-card-title>Plan Casa de Reposo</mat-card-title>
+        <mat-card-subtitle>Para centros de cuidado institucional</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div class="price-block">
+          <span class="price-main nursing-price">
+            {{ (nursingPlan?.monthlyPrice ?? 300) | currency:(nursingPlan?.currency ?? 'USD') }}
+          </span>
+          <span class="price-period">/mes</span>
+        </div>
+        <div class="price-annual">
+          o {{ (nursingPlan?.annualPrice ?? 3000) | currency:(nursingPlan?.currency ?? 'USD') }}/año
+          <span class="savings-tag">15% OFF</span>
+        </div>
+
+        <mat-divider class="plan-divider"></mat-divider>
+
+        <ul class="feature-list">
+          @for (f of (nursingPlan?.features ?? []); track f.name) {
+            @if (f.included) {
+              <li class="feature-item">
+                <mat-icon class="check-icon nursing-check">check_circle</mat-icon>
+                <span>{{ f.name }}</span>
+              </li>
+            }
+          }
+          @if (!nursingPlan) {
+            <li class="feature-item"><mat-icon class="check-icon nursing-check">check_circle</mat-icon><span>Gestión completa de residentes</span></li>
+            <li class="feature-item"><mat-icon class="check-icon nursing-check">check_circle</mat-icon><span>Personal y contratos</span></li>
+            <li class="feature-item"><mat-icon class="check-icon nursing-check">check_circle</mat-icon><span>Registro de actividades</span></li>
+            <li class="feature-item"><mat-icon class="check-icon nursing-check">check_circle</mat-icon><span>Analytics e informes</span></li>
+            <li class="feature-item"><mat-icon class="check-icon nursing-check">check_circle</mat-icon><span>Portal familiar incluido</span></li>
+          }
+        </ul>
+      </mat-card-content>
+
+      <mat-card-actions class="plan-actions">
+        <button mat-stroked-button color="accent" (click)="choosePlan('nursing-home', 'monthly')" class="plan-btn">
+          <mat-icon>calendar_today</mat-icon>
+          Mensual
+        </button>
+        <button mat-flat-button color="accent" (click)="choosePlan('nursing-home', 'annual')" class="plan-btn">
+          <mat-icon>event_available</mat-icon>
+          Anual — Ahorra 15%
+        </button>
+      </mat-card-actions>
+    </mat-card>
 
   </div>
+
+  <p class="trust-note">
+    <mat-icon>verified_user</mat-icon>
+    Pago seguro &nbsp;·&nbsp; Cancela en cualquier momento &nbsp;·&nbsp; Sin cargos ocultos
+  </p>
 
 </div>
