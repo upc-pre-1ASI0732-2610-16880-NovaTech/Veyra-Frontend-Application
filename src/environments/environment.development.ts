@@ -1,6 +1,7 @@
 export const environment = {
   production: false,
   platformProviderApiBaseUrl: 'https://veyra-backend-app.azurewebsites.net/api/v1',
+  stripePublicKey: 'pk_test_REPLACE_WITH_YOUR_STRIPE_PUBLIC_KEY',
 
   // Analytics Bounded Context
   platformProviderAnalyticsStaffTerminationsEndpointPath: '/nursing-homes/{nursingHomeId}/analytics/staff-terminations',
