@@ -41,4 +41,24 @@ export class PaymentsApi {
       .replace('{subscriptionId}', subscriptionId.toString());
     return this.http.post<void>(url, {});
   }
+
+  processPayment(subscriptionId: number, paymentMethodId: string): Observable<PaymentResponse> {
+    const url = `${base}${environment.platformProviderSubscriptionPaymentsEndpointPath}`.replace('{subscriptionId}', subscriptionId.toString());
+    return this.http.post<PaymentResponse>(url, { subscriptionId, paymentMethodId });
+  }
+
+  getPaymentHistory(subscriptionId: number): Observable<PaymentResponse[]> {
+    const url = `${base}${environment.platformProviderSubscriptionPaymentsEndpointPath}`.replace('{subscriptionId}', subscriptionId.toString());
+    return this.http.get<PaymentResponse[]>(url);
+  }
+}
+
+export interface PaymentResponse {
+  id: number;
+  subscriptionId: number;
+  stripePaymentIntentId: string;
+  amount: number;
+  currency: string;
+  status: 'PENDING' | 'PROCESSING' | 'SUCCEEDED' | 'FAILED' | 'CANCELED' | 'REFUNDED';
+  receiptUrl: string;
 }
