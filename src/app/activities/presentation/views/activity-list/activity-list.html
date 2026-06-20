@@ -1,0 +1,31 @@
+<div class="activity-list-container">
+  <div class="header">
+    <h2>Activities</h2>
+    <div class="controls">
+      <input type="date" [(ngModel)]="selectedDate" (change)="loadForDate()" />
+      <button (click)="navigateToCreate()">+ New Activity</button>
+    </div>
+  </div>
+
+  @if (store.loading()) {
+    <p class="info">Loading activities…</p>
+  }
+
+  @if (store.error()) {
+    <div class="error-banner">{{ store.error() }}</div>
+  }
+
+  @if (!store.loading() && store.activities().length === 0) {
+    <p class="info">No activities scheduled for this date.</p>
+  }
+
+  <div class="activity-cards">
+    @for (activity of store.activities(); track activity.id) {
+      <div class="activity-card">
+        <div class="activity-time">{{ activity.startTime }} – {{ activity.endTime }}</div>
+        <div class="activity-title">{{ activity.title }}</div>
+        <div class="activity-description">{{ activity.description }}</div>
+      </div>
+    }
+  </div>
+</div>
