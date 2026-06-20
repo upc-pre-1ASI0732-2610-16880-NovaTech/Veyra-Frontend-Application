@@ -20,9 +20,11 @@ export class ActivitiesApi {
   createActivity(nursingHomeId: number, command: CreateActivityCommand): Observable<number> {
     return this.endpoint.create(nursingHomeId, {
       name: command.name,
-      activityDate: command.activityDate,
-      startTime: command.startTime,
-      endTime: command.endTime,
+      activityPeriod: {
+        activityDate: command.activityDate,
+        startTime: command.startTime,
+        endTime: command.endTime
+      },
       area: command.area,
       residentId: command.residentId,
       attendantId: command.attendantId
