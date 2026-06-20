@@ -1,9 +1,11 @@
 export class CreateActivityCommand {
   constructor(
-    public title: string,
-    public description: string,
+    public name: string,
+    public activityDate: string,
     public startTime: string,
     public endTime: string,
-    public date: string
+    public area: string,
+    public residentId: number,
+    public attendantId: number
   ) {}
 }
