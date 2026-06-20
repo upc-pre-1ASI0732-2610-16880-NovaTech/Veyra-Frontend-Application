@@ -31,7 +31,8 @@
     "resident": "Residentes",
     "staff": "Personal",
     "care-management": "Gestión de la atención",
-    "room": "Habitaciones"
+    "room": "Habitaciones",
+    "activities": "Actividades"
   },
   "page-not-found": {
     "title": "Página no encontrada",

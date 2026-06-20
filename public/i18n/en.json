@@ -31,7 +31,8 @@
     "resident": "Residents",
     "staff": "Staff",
     "care-management": "Care Management",
-    "room": "Rooms"
+    "room": "Rooms",
+    "activities": "Activities"
   },
   "page-not-found": {
     "title": "Page not found",
