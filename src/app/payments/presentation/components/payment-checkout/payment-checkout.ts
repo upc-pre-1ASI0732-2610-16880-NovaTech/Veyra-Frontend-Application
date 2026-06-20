@@ -97,7 +97,7 @@ export class PaymentCheckoutPage implements OnInit, OnDestroy {
     this.paymentStore.createSubscription(paymentMethod!.id, this.planType, this.period, () => {
       this.isProcessing = false;
       this.successMessage = 'Suscripción creada exitosamente.';
-      setTimeout(() => this.router.navigate(['/analytics/dashboard']), 2000);
+      setTimeout(() => this.router.navigate(['/nursing/nursing-homes/new']), 2000);
     }, (err: string) => {
       this.isProcessing = false;
       this.errorMessage = err;

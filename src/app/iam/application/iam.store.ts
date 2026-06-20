@@ -6,6 +6,7 @@ import { IamApi } from '../infrastructure/iam-api';
 import { SignUpCommand } from '../domain/model/sign-up.command';
 import { CreateAdministratorCommand } from '../domain/model/create-administrator.command';
 import { MfaSetupResource } from '../infrastructure/mfa-api-endpoint';
+import { PaymentsApi } from '../../payments/infrastructure/payments-api';
 
 @Injectable({ providedIn: 'root' })
 export class IamStore {
@@ -28,7 +29,7 @@ export class IamStore {
   readonly isLoadingUsers = this.loadingUsers.asReadonly();
   readonly mfaSetupData = this.mfaSetupDataSignal.asReadonly();
 
-    constructor(private iamApi: IamApi) {
+    constructor(private iamApi: IamApi, private paymentsApi: PaymentsApi) {
       const token = localStorage.getItem('token');
       const userId = localStorage.getItem('userId');
       const username = localStorage.getItem('username'); // Recuperamos el username también
@@ -82,7 +83,10 @@ export class IamStore {
         this.currentUserIdSignal.set(signInResource.id);
 
         if (signInResource.roles.includes('ROLE_ADMIN')) {
-          router.navigate(['/nursing/nursing-homes/new']).then();
+          this.paymentsApi.getActiveSubscription(signInResource.id).subscribe({
+            next: () => router.navigate(['/nursing/nursing-homes/new']).then(),
+            error: () => router.navigate(['/payments/choose']).then()
+          });
         } else {
           router.navigate(['/analytics/dashboard']).then();
         }
