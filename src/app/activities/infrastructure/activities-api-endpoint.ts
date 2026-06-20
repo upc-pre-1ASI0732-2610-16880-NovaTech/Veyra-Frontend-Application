@@ -15,8 +15,16 @@ export class ActivitiesApiEndpoint {
     return this.http.get<ActivityResponse[]>(`${url}${params}`);
   }
 
-  create(nursingHomeId: number, body: { title: string; description: string; startTime: string; endTime: string; date: string }): Observable<{ id: number }> {
+  create(nursingHomeId: number, body: {
+    name: string;
+    activityDate: string;
+    startTime: string;
+    endTime: string;
+    area: string;
+    residentId: number;
+    attendantId: number;
+  }): Observable<number> {
     const url = `${base}${path}`.replace('{nursingHomeId}', nursingHomeId.toString());
-    return this.http.post<{ id: number }>(url, body);
+    return this.http.post<number>(url, body);
   }
 }

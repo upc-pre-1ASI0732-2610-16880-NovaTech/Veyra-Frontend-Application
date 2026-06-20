@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "public": "public",
+    "public": "dist/FrontendNovaPeruTech/browser",
     "ignore": [
       "firebase.json",
       "**/.*",

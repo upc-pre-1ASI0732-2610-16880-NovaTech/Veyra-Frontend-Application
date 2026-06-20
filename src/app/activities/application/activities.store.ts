@@ -31,12 +31,13 @@ export class ActivitiesStore {
     });
   }
 
-  addActivity(nursingHomeId: number, command: CreateActivityCommand): void {
+  addActivity(nursingHomeId: number, command: CreateActivityCommand, onSuccess?: () => void): void {
     this._loadingSignal.set(true);
     this._errorSignal.set(null);
     this.api.createActivity(nursingHomeId, command).subscribe({
       next: () => {
-        this.loadActivities(nursingHomeId);
+        this.loadActivities(nursingHomeId, command.activityDate);
+        if (onSuccess) onSuccess();
       },
       error: (e) => {
         this._errorSignal.set(e.message ?? 'Failed to create activity.');
@@ -46,6 +47,6 @@ export class ActivitiesStore {
   }
 
   private toEntity(r: ActivityResponse): Activity {
-    return new Activity(r.id, r.nursingHomeId, r.title, r.description, r.startTime, r.endTime, r.date);
+    return new Activity(r.activityId, r.hour, r.attendantName, r.activityName, r.areaToDevelop, r.status);
   }
 }

@@ -17,13 +17,15 @@ export class ActivitiesApi {
     return this.endpoint.getAll(nursingHomeId, date);
   }
 
-  createActivity(nursingHomeId: number, command: CreateActivityCommand): Observable<{ id: number }> {
+  createActivity(nursingHomeId: number, command: CreateActivityCommand): Observable<number> {
     return this.endpoint.create(nursingHomeId, {
-      title: command.title,
-      description: command.description,
+      name: command.name,
+      activityDate: command.activityDate,
       startTime: command.startTime,
       endTime: command.endTime,
-      date: command.date
+      area: command.area,
+      residentId: command.residentId,
+      attendantId: command.attendantId
     });
   }
 }
