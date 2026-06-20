@@ -10,8 +10,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatChipsModule } from '@angular/material/chips';
+import { LayoutNursingHome } from '../../../../shared/presentation/components/layout-nursing-home/layout-nursing-home';
 import { ActivitiesStore } from '../../../application/activities.store';
 import { StatusTranslatePipe } from '../../../../shared/presentation/pipes/status-translate.pipe';
 
@@ -21,8 +21,8 @@ import { StatusTranslatePipe } from '../../../../shared/presentation/pipes/statu
   imports: [
     CommonModule, FormsModule, TranslatePipe, StatusTranslatePipe,
     MatTableModule, MatFormFieldModule, MatInputModule, MatButtonModule,
-    MatIconModule, MatCardModule, MatProgressSpinnerModule,
-    MatTooltipModule, MatChipsModule
+    MatIconModule, MatCardModule, MatProgressSpinnerModule, MatChipsModule,
+    LayoutNursingHome
   ],
   templateUrl: './activity-list.html',
   styleUrls: ['./activity-list.css']
@@ -31,8 +31,8 @@ export class ActivityList implements OnInit {
   protected store = inject(ActivitiesStore);
   private router  = inject(Router);
 
-  nursingHomeId   = Number(localStorage.getItem('nursingHomeId'));
-  selectedDate    = new Date().toISOString().slice(0, 10);
+  nursingHomeId    = Number(localStorage.getItem('nursingHomeId'));
+  selectedDate     = new Date().toISOString().slice(0, 10);
   displayedColumns = ['hour', 'activityName', 'areaToDevelop', 'attendantName', 'status'];
 
   ngOnInit(): void { this.loadForDate(); }
