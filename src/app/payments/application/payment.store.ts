@@ -44,23 +44,35 @@ export class PaymentStore {
     this._billingCycleSignal.set(cycle);
   }
 
-  createSubscription(paymentMethodId: string): void {
+  createSubscription(
+    paymentMethodId: string,
+    planType?: string,
+    period?: 'MONTHLY' | 'ANNUALLY',
+    onSuccess?: () => void,
+    onError?: (msg: string) => void
+  ): void {
     const userId = Number(localStorage.getItem('userId'));
-    const plan = this._selectedPlanSignal();
-    if (!plan || !userId) {
-      this._errorSignal.set('No plan or user selected.');
+    const resolvedPlanType = planType ?? this._selectedPlanSignal()?.id;
+    const resolvedPeriod = period ?? this._billingCycleSignal();
+
+    if (!resolvedPlanType || !userId) {
+      onError?.('No se pudo determinar el plan o el usuario.');
       return;
     }
+
     this._loadingSignal.set(true);
     this._errorSignal.set(null);
-    this.api.createSubscription(userId, plan.id, this._billingCycleSignal(), paymentMethodId).subscribe({
+    this.api.createSubscription(userId, resolvedPlanType, resolvedPeriod, paymentMethodId).subscribe({
       next: (res) => {
         this._subscriptionSignal.set(Subscription.fromResponse(res));
         this._loadingSignal.set(false);
+        onSuccess?.();
       },
       error: (e) => {
-        this._errorSignal.set(e.message ?? 'Failed to create subscription.');
+        const msg = e.message ?? 'Failed to create subscription.';
+        this._errorSignal.set(msg);
         this._loadingSignal.set(false);
+        onError?.(msg);
       }
     });
   }
@@ -74,22 +86,25 @@ export class PaymentStore {
         this._subscriptionSignal.set(Subscription.fromResponse(res));
         this._loadingSignal.set(false);
       },
-      error: (e) => {
-        this._errorSignal.set(e.message ?? 'Failed to load subscription.');
+      error: () => {
+        this._subscriptionSignal.set(null);
         this._loadingSignal.set(false);
       }
     });
   }
 
-  cancelSubscription(): void {
+  cancelSubscription(onSuccess?: () => void): void {
     const userId = Number(localStorage.getItem('userId'));
     const sub = this._subscriptionSignal();
     if (!userId || !sub) return;
     this._loadingSignal.set(true);
     this.api.cancelSubscription(userId, sub.id).subscribe({
       next: () => {
-        this._subscriptionSignal.update(s => s ? { ...s, status: 'CANCELLED' } as unknown as Subscription : null);
+        this._subscriptionSignal.update(s =>
+          s ? Subscription.fromResponse({ ...s, status: 'CANCELED' } as any) : null
+        );
         this._loadingSignal.set(false);
+        onSuccess?.();
       },
       error: (e) => {
         this._errorSignal.set(e.message ?? 'Failed to cancel subscription.');

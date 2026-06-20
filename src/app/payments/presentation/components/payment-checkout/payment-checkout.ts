@@ -1,89 +1,110 @@
-import { Component, Input } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { NgIf } from '@angular/common';
-import { CurrencyPipe } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { Component, ElementRef, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { CommonModule, CurrencyPipe } from '@angular/common';
+import { ActivatedRoute, Router } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
+import { loadStripe, Stripe, StripeCardElement } from '@stripe/stripe-js';
+import { environment } from '../../../../../environments/environment';
+import { PaymentStore } from '../../../application/payment.store';
 
 @Component({
   selector: 'payment-checkout',
   templateUrl: './payment-checkout.html',
   styleUrls: ['./payment-checkout.css'],
   standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    NgIf,
-    CurrencyPipe
-  ]
+  imports: [CommonModule, CurrencyPipe, TranslatePipe]
 })
-export class PaymentCheckoutPage {
-  /** Values passed from route */
-  planPrice: number = 0;
-  planTitle: string = 'Selected Plan';
-  period: string = 'monthly';
+export class PaymentCheckoutPage implements OnInit, OnDestroy {
+  @ViewChild('cardElement', { static: true }) cardElementRef!: ElementRef;
 
-  stripeForm: FormGroup;
-  isLoading = false;
-  error: string | null = null;
+  protected paymentStore = inject(PaymentStore);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
 
-  constructor(private fb: FormBuilder, private route: ActivatedRoute) {
+  planTitle = '';
+  planType = '';
+  period: 'MONTHLY' | 'ANNUALLY' = 'MONTHLY';
+  planPrice = 0;
+  currency = 'USD';
 
-    // Build form
-    this.stripeForm = this.fb.group({
-      fullName: ['', Validators.required],
-      email: ['', Validators.required],
-      phone: ['', Validators.required],
-      cardNumber: ['', Validators.required],
-      expMonth: ['', Validators.required],
-      expYear: ['', Validators.required],
-      cvc: ['', Validators.required]
+  private stripe: Stripe | null = null;
+  private cardElement: StripeCardElement | null = null;
+
+  isProcessing = false;
+  successMessage: string | null = null;
+  errorMessage: string | null = null;
+
+  async ngOnInit(): Promise<void> {
+    this.route.params.subscribe(async p => {
+      const type = p['type'] as string;
+      const cycle = p['cycle'] as string;
+
+      this.planType = type === 'family' ? 'FAMILY' : 'NURSING_HOME';
+      this.period = cycle === 'annual' ? 'ANNUALLY' : 'MONTHLY';
+      this.planTitle = type === 'family' ? 'Family Plan' : 'Nursing Home Plan';
+
+      const plan = this.paymentStore.plans().find(pl => pl.id === this.planType);
+      if (plan) {
+        this.planPrice = this.period === 'MONTHLY' ? plan.monthlyPrice : plan.annualPrice;
+        this.currency = plan.currency;
+      } else {
+        this.planPrice = this.planType === 'FAMILY'
+          ? (this.period === 'MONTHLY' ? 30 : 300)
+          : (this.period === 'MONTHLY' ? 300 : 3000);
+      }
     });
 
-    // Get URL params dynamically
-    this.route.params.subscribe(p => {
-      const type = p['type'];
-      this.period = p['cycle'];
-
-      // Plan title
-      this.planTitle =
-        type === 'family'
-          ? 'Family Plan'
-          : type === 'nursing-home'
-            ? 'Nursing Home Plan'
-            : 'Subscription';
-
-      this.planPrice = this.getPrice(this.planTitle, this.period);
-    });
-  }
-
-  /** Pricing logic */
-  getPrice(plan: string, period: string): number {
-    if (plan === 'Family Plan') {
-      return period === 'monthly' ? 30 : 300;
+    this.stripe = await loadStripe(environment.stripePublicKey);
+    if (this.stripe) {
+      const elements = this.stripe.elements();
+      this.cardElement = elements.create('card', {
+        style: {
+          base: {
+            fontSize: '16px',
+            color: '#333',
+            '::placeholder': { color: '#aaa' }
+          }
+        }
+      });
+      this.cardElement.mount(this.cardElementRef.nativeElement);
     }
-    if (plan === 'Nursing Home Plan') {
-      return period === 'monthly' ? 300 : 3000;
-    }
-    return 0;
   }
 
-  /** Cancel button */
-  cancel() {
-    history.back();
+  ngOnDestroy(): void {
+    this.cardElement?.destroy();
   }
 
-  /** Simulate payment */
-  submitPayment() {
-    if (this.stripeForm.invalid) {
-      this.error = 'Please fill out all fields';
+  async submitPayment(): Promise<void> {
+    if (!this.stripe || !this.cardElement) {
+      this.errorMessage = 'Stripe no está disponible. Recarga la página.';
       return;
     }
 
-    this.error = null;
-    this.isLoading = true;
+    this.isProcessing = true;
+    this.errorMessage = null;
+    this.successMessage = null;
 
-    setTimeout(() => {
-      this.isLoading = false;
-      alert('Payment simulated successfully!');
-    }, 1500);
+    const { paymentMethod, error } = await this.stripe.createPaymentMethod({
+      type: 'card',
+      card: this.cardElement
+    });
+
+    if (error) {
+      this.errorMessage = error.message ?? 'Error al procesar la tarjeta.';
+      this.isProcessing = false;
+      return;
+    }
+
+    this.paymentStore.createSubscription(paymentMethod!.id, this.planType, this.period, () => {
+      this.isProcessing = false;
+      this.successMessage = 'Suscripción creada exitosamente.';
+      setTimeout(() => this.router.navigate(['/analytics/dashboard']), 2000);
+    }, (err: string) => {
+      this.isProcessing = false;
+      this.errorMessage = err;
+    });
+  }
+
+  cancel(): void {
+    history.back();
   }
 }
