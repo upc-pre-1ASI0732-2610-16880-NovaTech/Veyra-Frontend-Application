@@ -2,19 +2,16 @@
 <div class="sign-up-container">
   <div class="sign-up-card">
     <div class="card-header">
-      <!-- Dynamic badge for admin mode -->
-      @if (isAdminMode) {
-        <div class="admin-badge">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-          </svg>
-          <span>Administrator</span>
-        </div>
-      }
+      <div class="admin-badge">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+        </svg>
+        <span>Administrador</span>
+      </div>
 
-      <h1>{{ getTitle() }}</h1>
-      <p>{{ getSubtitle() }}</p>
+      <h1>Crear Cuenta de Administrador</h1>
+      <p>Registra una cuenta con acceso completo al sistema.</p>
     </div>
 
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
@@ -29,12 +26,12 @@
 
       <!-- Username Field -->
       <div class="form-group">
-        <label for="username">Username</label>
+        <label for="username">Usuario</label>
         <input
           id="username"
           type="text"
           formControlName="username"
-          placeholder="Choose a username"
+          placeholder="Elige un nombre de usuario"
           [class.error]="form.get('username')?.invalid && form.get('username')?.touched"
         />
         <span
@@ -47,13 +44,13 @@
 
       <!-- Password Field -->
       <div class="form-group">
-        <label for="password">Password</label>
+        <label for="password">Contraseña</label>
         <div class="password-input-wrapper">
           <input
             id="password"
             [type]="hidePassword ? 'password' : 'text'"
             formControlName="password"
-            placeholder="Create a password"
+            placeholder="Crea una contraseña"
             [class.error]="form.get('password')?.invalid && form.get('password')?.touched"
           />
           <button
@@ -76,10 +73,7 @@
         </div>
 
         <!-- Password Strength Indicator -->
-        <div
-          *ngIf="form.get('password')?.value"
-          class="password-strength"
-        >
+        <div *ngIf="form.get('password')?.value" class="password-strength">
           <div class="strength-bar">
             <div
               class="strength-fill"
@@ -87,10 +81,7 @@
               [style.background-color]="getPasswordStrengthColor()"
             ></div>
           </div>
-          <span
-            class="strength-label"
-            [style.color]="getPasswordStrengthColor()"
-          >
+          <span class="strength-label" [style.color]="getPasswordStrengthColor()">
             {{ getPasswordStrengthLabel() }}
           </span>
         </div>
@@ -105,13 +96,13 @@
 
       <!-- Confirm Password Field -->
       <div class="form-group">
-        <label for="confirmPassword">Confirm Password</label>
+        <label for="confirmPassword">Confirmar Contraseña</label>
         <div class="password-input-wrapper">
           <input
             id="confirmPassword"
             [type]="hideConfirmPassword ? 'password' : 'text'"
             formControlName="confirmPassword"
-            placeholder="Confirm your password"
+            placeholder="Confirma tu contraseña"
             [class.error]="(form.get('confirmPassword')?.invalid && form.get('confirmPassword')?.touched) ||
                           (form.hasError('passwordMismatch') && form.get('confirmPassword')?.touched)"
           />
@@ -143,25 +134,20 @@
       </div>
 
       <!-- Submit Button -->
-      <button
-        type="submit"
-        class="btn-primary"
-        [class.admin-btn]="isAdminMode"
-        [disabled]="store.loading()"
-      >
-        <span *ngIf="!store.loading()">{{ getSubmitButtonText() }}</span>
+      <button type="submit" class="btn-primary admin-btn" [disabled]="store.loading()">
+        <span *ngIf="!store.loading()">Crear Administrador</span>
         <span *ngIf="store.loading()" class="loading-spinner">
           <svg class="spinner" viewBox="0 0 50 50">
             <circle cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
           </svg>
-          {{ isAdminMode ? 'Creating administrator...' : 'Creating account...' }}
+          Creando administrador...
         </span>
       </button>
     </form>
 
     <!-- Sign In Link -->
     <div class="footer-link">
-      <p>Already have an account? <a routerLink="/iam/sign-in">Sign In</a></p>
+      <p>¿Ya tienes cuenta? <a routerLink="/iam/sign-in">Iniciar sesión</a></p>
     </div>
   </div>
 </div>

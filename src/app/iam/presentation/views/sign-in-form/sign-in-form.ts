@@ -91,15 +91,7 @@ export class SignInForm {
     return '';
   }
 
-  performSignUpUser(): void {
-    this.router.navigate(['/iam/sign-up'], {
-      queryParams: { role: 'user' }
-    }).then();
-  }
-
   performSignUpAdmin(): void {
-    this.router.navigate(['/iam/sign-up'], {
-      queryParams: { role: 'admin' }
-    }).then();
+    this.router.navigate(['/iam/sign-up']).then();
   }
 }

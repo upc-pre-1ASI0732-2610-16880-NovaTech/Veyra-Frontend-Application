@@ -2,9 +2,8 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormGroup, ReactiveFormsModule, Validators, AbstractControl,
   ValidationErrors, FormControl } from '@angular/forms';
-import { Router, RouterLink, ActivatedRoute } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { IamStore } from '../../../application/iam.store';
-import { SignUpCommand } from '../../../domain/model/sign-up.command';
 import { CreateAdministratorCommand } from '../../../domain/model/create-administrator.command';
 import {Toolbar} from '../../../../shared/presentation/components/toolbar/toolbar';
 
@@ -27,10 +26,6 @@ import {Toolbar} from '../../../../shared/presentation/components/toolbar/toolba
 export class SignUpForm {
   protected store = inject(IamStore);
   private router = inject(Router);
-  private route = inject(ActivatedRoute);
-
-  // Determines if this is admin or user registration
-  isAdminMode = false;
 
   form = new FormGroup({
     username:        new FormControl<string>('', { nonNullable: true, validators: [Validators.required, Validators.minLength(3), Validators.maxLength(20)] }),
@@ -40,12 +35,6 @@ export class SignUpForm {
 
   hidePassword = true;
   hideConfirmPassword = true;
-
-  constructor() {
-    this.route.queryParams.subscribe(params => {
-      this.isAdminMode = params['role'] === 'admin';
-    });
-  }
 
   /**
    * Custom validator to check password strength.
@@ -74,26 +63,13 @@ export class SignUpForm {
     return password === confirmPassword ? null : { passwordMismatch: true };
   }
 
-  /**
-   * Handles form submission for sign-up.
-   */
   onSubmit(): void {
     if (this.form.valid) {
-      if (this.isAdminMode) {
-        // Create administrator
-        const createAdminCommand = new CreateAdministratorCommand({
-          username: this.form.value.username!,
-          password: this.form.value.password!
-        });
-        this.store.createAdministrator(createAdminCommand, this.router);
-      } else {
-        const signUpCommand = new SignUpCommand({
-          username: this.form.value.username!,
-          password: this.form.value.password!,
-          roles: ['ROLE_USER']
-        });
-        this.store.signUp(signUpCommand, this.router);
-      }
+      const createAdminCommand = new CreateAdministratorCommand({
+        username: this.form.value.username!,
+        password: this.form.value.password!
+      });
+      this.store.createAdministrator(createAdminCommand, this.router);
     } else {
       this.markFormGroupTouched(this.form);
     }
@@ -207,26 +183,4 @@ export class SignUpForm {
     return '#48bb78';
   }
 
-  /**
-   * Gets the title based on mode.
-   */
-  getTitle(): string {
-    return this.isAdminMode ? 'Create Administrator Account' : 'Create User Account';
-  }
-
-  /**
-   * Gets the subtitle based on mode.
-   */
-  getSubtitle(): string {
-    return this.isAdminMode
-      ? 'Register a new administrator with full system access.'
-      : 'Sign up to get started with your account.';
-  }
-
-  /**
-   * Gets the submit button text based on mode.
-   */
-  getSubmitButtonText(): string {
-    return this.isAdminMode ? 'Create Administrator' : 'Create Account';
-  }
 }
