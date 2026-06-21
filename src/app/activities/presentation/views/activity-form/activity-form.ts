@@ -17,6 +17,9 @@ import { ActivitiesStore } from '../../../application/activities.store';
 import { CreateActivityCommand } from '../../../domain/model/create-activity.command';
 import { NursingStore } from '../../../../nursing/application/nursing.store';
 import { HcmStore } from '../../../../hcm/application/hcm.store';
+import { ProfilesStore } from '../../../../profiles/application/profiles.store';
+import { Resident } from '../../../../nursing/domain/model/resident.entity';
+import { StaffMember } from '../../../../hcm/domain/model/staff-member.entity';
 
 @Component({
   selector: 'app-activity-form',
@@ -32,10 +35,11 @@ import { HcmStore } from '../../../../hcm/application/hcm.store';
   styleUrls: ['./activity-form.css']
 })
 export class ActivityForm {
-  protected store        = inject(ActivitiesStore);
-  protected nursingStore = inject(NursingStore);
-  protected hcmStore     = inject(HcmStore);
-  private router         = inject(Router);
+  protected store         = inject(ActivitiesStore);
+  protected nursingStore  = inject(NursingStore);
+  protected hcmStore      = inject(HcmStore);
+  protected profilesStore = inject(ProfilesStore);
+  private router          = inject(Router);
 
   nursingHomeId = Number(localStorage.getItem('nursingHomeId'));
 
@@ -57,6 +61,17 @@ export class ActivityForm {
   constructor() {
     this.nursingStore.loadResidentsByNursingHome(this.nursingHomeId);
     this.hcmStore.loadStaff(this.nursingHomeId);
+    this.profilesStore.loadPersonProfiles();
+  }
+
+  residentLabel(r: Resident): string {
+    const profile = this.profilesStore.personProfiles().find(p => p.id === r.personProfileId);
+    return profile?.fullName ?? `Residente #${r.id}`;
+  }
+
+  staffLabel(s: StaffMember): string {
+    const profile = this.profilesStore.personProfiles().find(p => p.id === s.personProfileId);
+    return profile?.fullName ?? `Personal #${s.id}`;
   }
 
   private formatDate(date: Date): string {

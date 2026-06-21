@@ -179,7 +179,7 @@
                 </mat-option>
               }
               @for (r of nursingStore.residents(); track r.id) {
-                <mat-option [value]="r.id">Residente #{{ r.id }}</mat-option>
+                <mat-option [value]="r.id">{{ residentLabel(r) }}</mat-option>
               }
               @if (!nursingStore.loading() && nursingStore.residents().length === 0) {
                 <mat-option disabled>Sin residentes disponibles</mat-option>
@@ -199,7 +199,7 @@
                 <mat-option disabled>Cargando...</mat-option>
               }
               @for (s of hcmStore.staff(); track s.id) {
-                <mat-option [value]="s.id">Personal #{{ s.id }}</mat-option>
+                <mat-option [value]="s.id">{{ staffLabel(s) }}</mat-option>
               }
               @if (!hcmStore.loading() && hcmStore.staff().length === 0) {
                 <mat-option disabled>Sin personal disponible</mat-option>

@@ -29,8 +29,6 @@
   <!-- Empty state -->
   @if (!store.loading() && store.activities().length === 0 && !store.error()) {
     <div class="empty-state">
-      <mat-icon class="empty-icon">event_busy</mat-icon>
-      <p>{{ 'activities.no-activities' | translate }}</p>
       <button mat-raised-button color="primary" (click)="navigateToCreate()">
         <mat-icon>add</mat-icon>
         {{ 'activities.new' | translate }}
