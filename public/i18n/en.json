@@ -32,7 +32,8 @@
     "staff": "Staff",
     "care-management": "Care Management",
     "room": "Rooms",
-    "activities": "Activities"
+    "activities": "Activities",
+    "subscription": "My Subscription"
   },
   "page-not-found": {
     "title": "Page not found",
