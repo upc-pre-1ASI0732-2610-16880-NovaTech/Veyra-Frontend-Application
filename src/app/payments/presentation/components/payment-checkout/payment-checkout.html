@@ -133,6 +133,15 @@
           </mat-form-field>
         </div>
 
+        <div class="no-refund-notice">
+          <mat-checkbox formControlName="acceptNoRefund" color="primary">
+            Entiendo y acepto que, una vez procesado el pago, <strong>no será posible solicitar un reembolso</strong>.
+          </mat-checkbox>
+          @if (form.get('acceptNoRefund')?.invalid && form.get('acceptNoRefund')?.touched) {
+            <div class="no-refund-error">Debes aceptar la política de no reembolso para continuar.</div>
+          }
+        </div>
+
         <div class="form-actions">
           <button mat-stroked-button type="button" (click)="cancel()">
             <mat-icon>arrow_back</mat-icon>
