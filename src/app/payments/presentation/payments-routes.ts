@@ -17,6 +17,10 @@ const paymentCheckout = () =>
   import('./components/payment-checkout/payment-checkout')
     .then(m => m.PaymentCheckoutPage);
 
+const subscriptionManagement = () =>
+  import('./views/subscription-management/subscription-management')
+    .then(m => m.SubscriptionManagement);
+
 const baseTitle = 'Veyra';
 
 export const paymentsRoutes: Routes = [
@@ -39,5 +43,10 @@ export const paymentsRoutes: Routes = [
     path: 'checkout/:type/:cycle',
     loadComponent: paymentCheckout,
     title: `Checkout | ${baseTitle}`
+  },
+  {
+    path: 'management',
+    loadComponent: subscriptionManagement,
+    title: `Mi Suscripción | ${baseTitle}`
   }
 ];

@@ -93,6 +93,27 @@ export class PaymentStore {
     });
   }
 
+  updateSubscription(planType: string, period: 'MONTHLY' | 'ANNUALLY', onSuccess?: () => void, onError?: (msg: string) => void): void {
+    const userId = Number(localStorage.getItem('userId'));
+    const sub = this._subscriptionSignal();
+    if (!userId || !sub) return;
+    this._loadingSignal.set(true);
+    this._errorSignal.set(null);
+    this.api.updateSubscription(userId, sub.id, planType, period).subscribe({
+      next: (res) => {
+        this._subscriptionSignal.set(Subscription.fromResponse(res));
+        this._loadingSignal.set(false);
+        onSuccess?.();
+      },
+      error: (e) => {
+        const msg = e.message ?? 'Failed to update subscription.';
+        this._errorSignal.set(msg);
+        this._loadingSignal.set(false);
+        onError?.(msg);
+      }
+    });
+  }
+
   cancelSubscription(onSuccess?: () => void): void {
     const userId = Number(localStorage.getItem('userId'));
     const sub = this._subscriptionSignal();
