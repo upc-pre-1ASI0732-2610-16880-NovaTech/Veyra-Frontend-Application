@@ -1,0 +1,174 @@
+<app-layout-nursing-home>
+
+  <h1 class="page-title">
+    <mat-icon>subscriptions</mat-icon>
+    Mi Suscripción
+  </h1>
+
+  @if (store.loading()) {
+    <div class="loading-wrapper">
+      <mat-spinner diameter="48"></mat-spinner>
+    </div>
+  }
+
+  <!-- Sin suscripción activa -->
+  @if (!store.loading() && !subscription) {
+    <mat-card class="no-sub-card">
+      <div class="no-sub-content">
+        <mat-icon class="no-sub-icon">credit_card_off</mat-icon>
+        <h2>Sin suscripción activa</h2>
+        <p>Aún no tienes un plan contratado. Elige uno para acceder a todas las funcionalidades.</p>
+        <button mat-raised-button color="primary" (click)="goToChoose()">
+          <mat-icon>add_circle</mat-icon>
+          Ver planes disponibles
+        </button>
+      </div>
+    </mat-card>
+  }
+
+  <!-- Suscripción activa -->
+  @if (!store.loading() && subscription) {
+    <div class="management-grid">
+
+      <!-- Tarjeta plan actual -->
+      <mat-card class="current-plan-card">
+        <div class="card-header-accent">
+          <mat-icon>verified</mat-icon>
+          <span>Plan Actual</span>
+        </div>
+
+        <div class="plan-info">
+          <div class="plan-name">{{ currentPlanLabel }}</div>
+
+          <mat-chip-set>
+            <mat-chip [class]="'status-chip status-' + subscription.status.toLowerCase()">
+              {{ 'status.subscription.' + subscription.status | translate }}
+            </mat-chip>
+            <mat-chip class="period-chip">
+              {{ periodLabel(subscription.period) }}
+            </mat-chip>
+          </mat-chip-set>
+
+          <mat-divider></mat-divider>
+
+          <div class="info-row">
+            <mat-icon>payments</mat-icon>
+            <div>
+              <span class="info-label">Monto</span>
+              <span class="info-value">{{ subscription.amount | currency:subscription.currency }}</span>
+            </div>
+          </div>
+
+          <div class="info-row">
+            <mat-icon>event</mat-icon>
+            <div>
+              <span class="info-label">Período actual</span>
+              <span class="info-value">
+                {{ subscription.currentPeriodStart | date:'dd MMM yyyy' }}
+                — {{ subscription.currentPeriodEnd | date:'dd MMM yyyy' }}
+              </span>
+            </div>
+          </div>
+
+          <div class="info-row">
+            <mat-icon>autorenew</mat-icon>
+            <div>
+              <span class="info-label">Próxima facturación</span>
+              <span class="info-value">{{ subscription.currentPeriodEnd | date:'dd MMM yyyy' }}</span>
+            </div>
+          </div>
+        </div>
+
+        @if (store.error()) {
+          <div class="error-banner">
+            <mat-icon>error_outline</mat-icon>
+            {{ store.error() }}
+          </div>
+        }
+      </mat-card>
+
+      <!-- Cambiar ciclo de facturación -->
+      @if (samePlanOtherPeriod) {
+        <mat-card class="switch-card">
+          <h3>
+            <mat-icon>swap_horiz</mat-icon>
+            Cambiar facturación
+          </h3>
+          <p>
+            @if (subscription.period === 'MONTHLY') {
+              Pasa al plan <strong>Anual</strong> y ahorra hasta un 15% comparado con el mensual.
+            } @else {
+              Pasa al plan <strong>Mensual</strong> para mayor flexibilidad sin compromisos a largo plazo.
+            }
+          </p>
+          <button mat-raised-button color="accent" (click)="switchPeriod()" [disabled]="store.loading()">
+            <mat-icon>{{ subscription.period === 'MONTHLY' ? 'event_available' : 'calendar_today' }}</mat-icon>
+            Cambiar a {{ samePlanOtherPeriod === 'ANNUALLY' ? 'Anual' : 'Mensual' }}
+          </button>
+        </mat-card>
+      }
+
+      <!-- Cambiar a otro plan -->
+      @for (plan of otherPlans; track plan.id) {
+        <mat-card class="other-plan-card">
+          <h3>
+            <mat-icon>upgrade</mat-icon>
+            Cambiar a {{ planLabel(plan.id) }}
+          </h3>
+          <p>{{ plan.description }}</p>
+
+          <div class="price-row">
+            <span class="price">{{ priceForPlan(plan, subscription.period) | currency:plan.currency }}</span>
+            <span class="price-period">{{ periodLabel(subscription.period) }}</span>
+          </div>
+
+          <div class="features-mini">
+            @for (feat of plan.features.slice(0, 4); track feat.name) {
+              @if (feat.included) {
+                <div class="feat-row">
+                  <mat-icon>check_circle</mat-icon>
+                  <span>{{ feat.name }}</span>
+                </div>
+              }
+            }
+          </div>
+
+          <button mat-raised-button color="primary" (click)="switchPlan(plan)" [disabled]="store.loading()">
+            <mat-icon>swap_vert</mat-icon>
+            Cambiar a este plan
+          </button>
+        </mat-card>
+      }
+
+      <!-- Cancelar suscripción -->
+      @if (subscription.status !== 'CANCELED') {
+        <mat-card class="cancel-card">
+          <h3>
+            <mat-icon>cancel</mat-icon>
+            Cancelar suscripción
+          </h3>
+          <p>Al cancelar, seguirás teniendo acceso hasta el <strong>{{ subscription.currentPeriodEnd | date:'dd MMM yyyy' }}</strong>.</p>
+
+          @if (!confirmingCancel) {
+            <button mat-stroked-button color="warn" (click)="requestCancel()">
+              <mat-icon>cancel</mat-icon>
+              Cancelar suscripción
+            </button>
+          } @else {
+            <div class="confirm-cancel">
+              <p class="confirm-text">¿Estás seguro? Esta acción no se puede deshacer.</p>
+              <div class="confirm-actions">
+                <button mat-button (click)="confirmingCancel = false">Volver</button>
+                <button mat-raised-button color="warn" (click)="confirmCancel()" [disabled]="store.loading()">
+                  Sí, cancelar
+                </button>
+              </div>
+            </div>
+          }
+        </mat-card>
+      }
+
+    </div>
+  }
+
+</app-layout-nursing-home>
