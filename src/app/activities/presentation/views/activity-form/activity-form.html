@@ -12,9 +12,22 @@
         <h3>{{ 'activities.form.title' | translate }}</h3>
       </div>
 
+      @if (nursingStore.error()) {
+        <div class="error-banner">
+          <mat-icon>warning</mat-icon>
+          No se pudo cargar residentes: {{ nursingStore.error() }}
+        </div>
+      }
+      @if (hcmStore.error()) {
+        <div class="error-banner">
+          <mat-icon>warning</mat-icon>
+          No se pudo cargar personal: {{ hcmStore.error() }}
+        </div>
+      }
+
       <form [formGroup]="form" (ngSubmit)="onSubmit()" class="activity-form">
 
-        <!-- Name -->
+        <!-- Nombre -->
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>{{ 'activities.form.name' | translate }}</mat-label>
           <input matInput formControlName="name" placeholder="Ej: Ejercicios de memoria" />
@@ -24,7 +37,7 @@
           }
         </mat-form-field>
 
-        <!-- Area -->
+        <!-- Área -->
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>{{ 'activities.form.area' | translate }}</mat-label>
           <input matInput formControlName="area" placeholder="Ej: Cognitiva, Motricidad, Social" />
@@ -34,43 +47,90 @@
           }
         </mat-form-field>
 
-        <!-- Date -->
+        <!-- Fecha — datepicker con calendario -->
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>{{ 'activities.form.date' | translate }}</mat-label>
-          <input matInput type="date" formControlName="activityDate" />
-          <mat-icon matSuffix>calendar_today</mat-icon>
+          <input matInput [matDatepicker]="datePicker" formControlName="activityDate"
+                 placeholder="dd/mm/aaaa" readonly />
+          <mat-datepicker-toggle matIconSuffix [for]="datePicker"></mat-datepicker-toggle>
+          <mat-datepicker #datePicker></mat-datepicker>
           @if (form.get('activityDate')?.invalid && form.get('activityDate')?.touched) {
             <mat-error>{{ 'activities.form.date-required' | translate }}</mat-error>
           }
         </mat-form-field>
 
-        <!-- Time row -->
+        <!-- Hora de inicio -->
         <div class="time-row">
-          <mat-form-field appearance="outline">
-            <mat-label>{{ 'activities.form.start-time' | translate }}</mat-label>
-            <input matInput type="time" formControlName="startTime" />
-            <mat-icon matSuffix>schedule</mat-icon>
-            @if (form.get('startTime')?.invalid && form.get('startTime')?.touched) {
-              <mat-error>{{ 'activities.form.start-time-required' | translate }}</mat-error>
+          <div class="time-group">
+            <label class="time-label">{{ 'activities.form.start-time' | translate }}</label>
+            <div class="time-selects">
+              <mat-form-field appearance="outline" class="time-select-field">
+                <mat-label>Hora</mat-label>
+                <mat-select formControlName="startHour">
+                  @for (h of hours; track h) {
+                    <mat-option [value]="h">{{ h }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+              <span class="time-colon">:</span>
+              <mat-form-field appearance="outline" class="time-select-field">
+                <mat-label>Min</mat-label>
+                <mat-select formControlName="startMinute">
+                  @for (m of minutes; track m) {
+                    <mat-option [value]="m">{{ m }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+            </div>
+            @if ((form.get('startHour')?.invalid || form.get('startMinute')?.invalid)
+                 && form.get('startHour')?.touched) {
+              <mat-error class="time-error">{{ 'activities.form.start-time-required' | translate }}</mat-error>
             }
-          </mat-form-field>
+          </div>
 
-          <mat-form-field appearance="outline">
-            <mat-label>{{ 'activities.form.end-time' | translate }}</mat-label>
-            <input matInput type="time" formControlName="endTime" />
-            <mat-icon matSuffix>schedule</mat-icon>
-            @if (form.get('endTime')?.invalid && form.get('endTime')?.touched) {
-              <mat-error>{{ 'activities.form.end-time-required' | translate }}</mat-error>
+          <!-- Hora de fin -->
+          <div class="time-group">
+            <label class="time-label">{{ 'activities.form.end-time' | translate }}</label>
+            <div class="time-selects">
+              <mat-form-field appearance="outline" class="time-select-field">
+                <mat-label>Hora</mat-label>
+                <mat-select formControlName="endHour">
+                  @for (h of hours; track h) {
+                    <mat-option [value]="h">{{ h }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+              <span class="time-colon">:</span>
+              <mat-form-field appearance="outline" class="time-select-field">
+                <mat-label>Min</mat-label>
+                <mat-select formControlName="endMinute">
+                  @for (m of minutes; track m) {
+                    <mat-option [value]="m">{{ m }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+            </div>
+            @if ((form.get('endHour')?.invalid || form.get('endMinute')?.invalid)
+                 && form.get('endHour')?.touched) {
+              <mat-error class="time-error">{{ 'activities.form.end-time-required' | translate }}</mat-error>
             }
-          </mat-form-field>
+          </div>
         </div>
 
-        <!-- Resident -->
+        <!-- Residente -->
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>{{ 'activities.form.resident' | translate }}</mat-label>
           <mat-select formControlName="residentId">
+            @if (nursingStore.loading()) {
+              <mat-option disabled>Cargando...</mat-option>
+            }
             @for (r of nursingStore.residents(); track r.id) {
-              <mat-option [value]="r.id">Residente #{{ r.id }}</mat-option>
+              <mat-option [value]="r.id">
+                Residente #{{ r.id }} (perfil {{ r.personProfileId }})
+              </mat-option>
+            }
+            @if (!nursingStore.loading() && nursingStore.residents().length === 0) {
+              <mat-option disabled>Sin residentes disponibles</mat-option>
             }
           </mat-select>
           <mat-icon matSuffix>person</mat-icon>
@@ -79,12 +139,20 @@
           }
         </mat-form-field>
 
-        <!-- Attendant -->
+        <!-- Personal responsable -->
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>{{ 'activities.form.attendant' | translate }}</mat-label>
           <mat-select formControlName="attendantId">
+            @if (hcmStore.loading()) {
+              <mat-option disabled>Cargando...</mat-option>
+            }
             @for (s of hcmStore.staff(); track s.id) {
-              <mat-option [value]="s.id">Personal #{{ s.id }}</mat-option>
+              <mat-option [value]="s.id">
+                Personal #{{ s.id }} (perfil {{ s.personProfileId }})
+              </mat-option>
+            }
+            @if (!hcmStore.loading() && hcmStore.staff().length === 0) {
+              <mat-option disabled>Sin personal disponible</mat-option>
             }
           </mat-select>
           <mat-icon matSuffix>badge</mat-icon>
@@ -96,17 +164,18 @@
         @if (store.error()) {
           <div class="error-banner">
             <mat-icon>error_outline</mat-icon>
-            {{ store.error() }}
+            <span><strong>Error:</strong> {{ store.error() }}</span>
           </div>
         }
 
-        <!-- Actions -->
+        <!-- Acciones -->
         <div class="form-actions">
           <button mat-raised-button type="button" (click)="onCancel()">
             <mat-icon>arrow_back</mat-icon>
             {{ 'activities.form.cancel' | translate }}
           </button>
-          <button mat-raised-button color="primary" type="submit" [disabled]="store.loading()">
+          <button mat-raised-button color="primary" type="submit"
+                  [disabled]="store.loading() || nursingStore.loading() || hcmStore.loading()">
             <mat-icon>save</mat-icon>
             {{ store.loading() ? ('activities.form.saving' | translate) : ('activities.form.save' | translate) }}
           </button>

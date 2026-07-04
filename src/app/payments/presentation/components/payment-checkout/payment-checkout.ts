@@ -10,6 +10,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { PaymentStore } from '../../../application/payment.store';
 
 @Component({
@@ -20,7 +21,7 @@ import { PaymentStore } from '../../../application/payment.store';
   imports: [
     CommonModule, CurrencyPipe, ReactiveFormsModule, TranslatePipe,
     MatFormFieldModule, MatInputModule, MatButtonModule, MatCardModule,
-    MatIconModule, MatProgressSpinnerModule, MatDividerModule
+    MatIconModule, MatProgressSpinnerModule, MatDividerModule, MatCheckboxModule
   ]
 })
 export class PaymentCheckoutPage implements OnInit {
@@ -39,10 +40,11 @@ export class PaymentCheckoutPage implements OnInit {
   errorMessage: string | null = null;
 
   form = new FormGroup({
-    cardholderName: new FormControl('', [Validators.required, Validators.minLength(3)]),
-    cardNumber:     new FormControl('', [Validators.required]),
-    expiry:         new FormControl('', [Validators.required, Validators.pattern(/^\d{2}\/\d{2}$/)]),
-    cvc:            new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(4)])
+    cardholderName:  new FormControl('', [Validators.required, Validators.minLength(3)]),
+    cardNumber:      new FormControl('', [Validators.required]),
+    expiry:          new FormControl('', [Validators.required, Validators.pattern(/^\d{2}\/\d{2}$/)]),
+    cvc:             new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(4)]),
+    acceptNoRefund:  new FormControl(false, [Validators.requiredTrue])
   });
 
   ngOnInit(): void {

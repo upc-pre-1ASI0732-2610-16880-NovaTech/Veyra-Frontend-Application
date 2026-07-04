@@ -65,9 +65,46 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
+  align-items: start;
 }
 
-.time-row mat-form-field { width: 100%; }
+.time-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.time-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #546e7a;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  padding-left: 2px;
+}
+
+.time-selects {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.time-select-field {
+  flex: 1;
+}
+
+.time-colon {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #546e7a;
+  margin-bottom: 18px;
+}
+
+.time-error {
+  font-size: 0.75rem;
+  color: #f44336;
+  padding-left: 2px;
+}
 
 /* Error */
 .error-banner {

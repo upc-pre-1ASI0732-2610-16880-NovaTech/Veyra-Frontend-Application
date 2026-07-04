@@ -1,4 +1,5 @@
 import { Injectable, signal } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { ActivitiesApi } from '../infrastructure/activities-api';
 import { Activity } from '../domain/model/activity.entity';
 import { CreateActivityCommand } from '../domain/model/create-activity.command';
@@ -34,13 +35,27 @@ export class ActivitiesStore {
   addActivity(nursingHomeId: number, command: CreateActivityCommand, onSuccess?: () => void): void {
     this._loadingSignal.set(true);
     this._errorSignal.set(null);
+    console.log('[ActivityForm] Enviando al API:', { nursingHomeId, ...command });
     this.api.createActivity(nursingHomeId, command).subscribe({
       next: () => {
         this.loadActivities(nursingHomeId, command.activityDate);
         if (onSuccess) onSuccess();
       },
-      error: (e) => {
-        this._errorSignal.set(e.message ?? 'Failed to create activity.');
+      error: (e: HttpErrorResponse) => {
+        const body = e.error;
+        let msg: string;
+        if (typeof body === 'string') {
+          msg = body;
+        } else if (body?.message) {
+          msg = body.message;
+        } else if (body?.detail) {
+          msg = body.detail;
+        } else if (body?.errors) {
+          msg = JSON.stringify(body.errors);
+        } else {
+          msg = `Error ${e.status}: ${e.statusText}`;
+        }
+        this._errorSignal.set(msg);
         this._loadingSignal.set(false);
       }
     });

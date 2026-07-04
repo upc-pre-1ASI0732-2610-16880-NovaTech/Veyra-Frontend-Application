@@ -165,6 +165,25 @@
 }
 .row-two mat-form-field { width: 100%; }
 
+.no-refund-notice {
+  margin-top: 16px;
+  padding: 12px 14px;
+  background: #fff8e1;
+  border: 1px solid #ffe082;
+  border-radius: 10px;
+}
+
+.no-refund-notice mat-checkbox {
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.no-refund-error {
+  margin-top: 6px;
+  font-size: 12px;
+  color: #c62828;
+}
+
 .form-actions {
   display: flex;
   gap: 12px;
