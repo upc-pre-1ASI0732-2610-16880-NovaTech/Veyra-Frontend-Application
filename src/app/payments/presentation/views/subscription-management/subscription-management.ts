@@ -11,6 +11,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { PaymentStore } from '../../../application/payment.store';
 import { LayoutNursingHome } from '../../../../shared/presentation/components/layout-nursing-home/layout-nursing-home';
+import { ConfirmDialog, ConfirmDialogData } from '../../../../shared/presentation/components/confirm-dialog/confirm-dialog';
 import { Plan } from '../../../domain/model/plan.entity';
 
 @Component({
@@ -77,13 +78,38 @@ export class SubscriptionManagement implements OnInit {
     const sub = this.subscription;
     const target = this.samePlanOtherPeriod;
     if (!sub || !target) return;
-    this.store.updateSubscription(sub.planType, target);
+
+    this.openConfirmDialog({
+      title: 'Cambiar facturación',
+      icon: 'swap_horiz',
+      message: `Vas a cambiar la facturación de tu suscripción de ${this.periodLabel(sub.period)} a ${this.periodLabel(target)}. ` +
+        `El cambio se aplicará de inmediato sobre tu plan ${this.currentPlanLabel}. ¿Deseas continuar?`,
+      confirmText: 'Sí, cambiar'
+    }, () => this.store.updateSubscription(sub.planType, target));
   }
 
   switchPlan(plan: Plan): void {
     const sub = this.subscription;
     if (!sub) return;
-    this.store.updateSubscription(plan.id, sub.period);
+
+    this.openConfirmDialog({
+      title: 'Cambiar de plan',
+      icon: 'upgrade',
+      message: `Vas a cambiar tu suscripción del plan ${this.currentPlanLabel} al plan ${this.planLabel(plan.id)}. ` +
+        `Este cambio se aplicará de inmediato. ¿Deseas continuar?`,
+      confirmText: 'Sí, cambiar plan'
+    }, () => this.store.updateSubscription(plan.id, sub.period));
+  }
+
+  private openConfirmDialog(data: ConfirmDialogData, onConfirm: () => void): void {
+    const ref = this.dialog.open(ConfirmDialog, {
+      width: '440px',
+      data: { cancelText: 'Volver', ...data }
+    });
+
+    ref.afterClosed().subscribe(confirmed => {
+      if (confirmed) onConfirm();
+    });
   }
 
   requestCancel(): void {
