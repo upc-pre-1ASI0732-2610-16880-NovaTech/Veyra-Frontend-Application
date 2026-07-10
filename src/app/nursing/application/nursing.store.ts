@@ -1,11 +1,13 @@
 import { computed, Injectable, Signal, signal } from '@angular/core';
 import { NursingHome } from '../domain/model/nursing-home.entity';
 import { NursingApi } from '../infrastructure/nursing-api';
-import {Observable, retry, throwError} from 'rxjs';
+import {catchError, Observable, retry, tap, throwError} from 'rxjs';
 import { Resident } from '../domain/model/resident.entity';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Room } from '../domain/model/room.entity';
 import { Medication } from '../domain/model/medication.entity';
+import { MedicationAdministration } from '../domain/model/medication-administration.entity';
+import { AdministerMedicationCommand } from '../domain/model/administer-medication.command';
 import { CreateResidentCommand } from '../domain/model/create-resident.command';
 import { CreateRoomCommand } from '../domain/model/create-room.command';
 import { CreateMedicationCommand } from '../domain/model/create-medication.command';
@@ -26,6 +28,7 @@ import {VitalSign} from '../domain/model/vital-sign.entity';
 })
 export class NursingStore {
   private readonly _medicationsSignal = signal<Medication[]>([]);
+  private readonly _medicationAdministrationsSignal = signal<MedicationAdministration[]>([]);
   private readonly _residentSignal = signal<Resident[]>([]);
   private readonly _nursingHomesSignal= signal<NursingHome[]>([]);
   private readonly _roomsSignal = signal<Room[]>([]);
@@ -39,6 +42,7 @@ export class NursingStore {
   readonly devices = this._devicesSignal.asReadonly();
   readonly allergies = this._allergiesSignal.asReadonly();
   readonly medications = this._medicationsSignal.asReadonly();
+  readonly medicationAdministrations = this._medicationAdministrationsSignal.asReadonly();
   readonly residents = this._residentSignal.asReadonly();
   readonly rooms = this._roomsSignal.asReadonly();
   readonly vitalSigns = this._vitalSignsSignal.asReadonly();
@@ -204,10 +208,10 @@ export class NursingStore {
     });
   }
 
-  addMedication(residentId: number, createMedicationCommand: CreateMedicationCommand): void {
+  addMedication(nursingHomeId: number, createMedicationCommand: CreateMedicationCommand): void {
     this._loadingSignal.set(true);
     this._errorSignal.set(null);
-    this.nursingApi.createMedication(residentId, createMedicationCommand).pipe(retry(2)).subscribe({
+    this.nursingApi.createMedication(nursingHomeId, createMedicationCommand).pipe(retry(2)).subscribe({
       next: createdMedication => {
         this._medicationsSignal.update(medications => [...medications, createdMedication]);
         this._loadingSignal.set(false);
@@ -242,8 +246,35 @@ export class NursingStore {
     );
   }
 
-  getMedicationsByResidentId(residentId: number): Signal<Medication[]> {
-    return computed(() => this.medications().filter(medication => medication.residentId === residentId));
+  administerMedication(residentId: number, medicationId: number, nursingHomeId: number, command: AdministerMedicationCommand): Observable<void> {
+    this._loadingSignal.set(true);
+    this._errorSignal.set(null);
+    return this.nursingApi.administerMedication(residentId, medicationId, command).pipe(
+      tap(() => {
+        this.loadMedications(nursingHomeId);
+        this._loadingSignal.set(false);
+      }),
+      catchError(err => {
+        this._errorSignal.set(this.formatError(err, 'Failed to register medication intake'));
+        this._loadingSignal.set(false);
+        return throwError(() => err);
+      })
+    );
+  }
+
+  loadMedicationAdministrations(residentId: number, medicationId: number): void {
+    this._loadingSignal.set(true);
+    this._errorSignal.set(null);
+    this.nursingApi.getMedicationAdministrations(residentId, medicationId).pipe(takeUntilDestroyed()).subscribe({
+      next: administrations => {
+        this._medicationAdministrationsSignal.set(administrations);
+        this._loadingSignal.set(false);
+      },
+      error: err => {
+        this._errorSignal.set(this.formatError(err, 'Failed to load medication administrations'));
+        this._loadingSignal.set(false);
+      }
+    });
   }
 
   addAllergy(residentId: number, createAllergyCommand: CreateAllergyCommand): void {
@@ -292,12 +323,12 @@ export class NursingStore {
   }
 
   /**
-   * Loads all residents from the API into the store.
+   * Loads the shared medication inventory of a nursing home into the store.
    */
-  loadMedications(residentId: number): void {
+  loadMedications(nursingHomeId: number): void {
     this._loadingSignal.set(true);
     this._errorSignal.set(null);
-    this.nursingApi.getMedications(residentId).pipe(takeUntilDestroyed()).subscribe({
+    this.nursingApi.getMedications(nursingHomeId).pipe(takeUntilDestroyed()).subscribe({
       next: medications => {
         this._medicationsSignal.set(medications);
         this._loadingSignal.set(false);
