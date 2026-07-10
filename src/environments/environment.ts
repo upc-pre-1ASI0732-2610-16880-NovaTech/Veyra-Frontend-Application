@@ -1,7 +1,7 @@
 export const environment = {
   production: true,
   platformProviderApiBaseUrl: 'https://veyra-backend-app.azurewebsites.net/api/v1',
-  stripePublicKey: 'pk_test_REPLACE_WITH_YOUR_STRIPE_PUBLIC_KEY',
+  stripePublicKey: 'pk_test_51TSlv2H9VotIcKnvY65C2bj77Mvxdt0GHBoo8y5qPw3WF6qQF80v11nsn4LJ8bxqTGW8sSGlwYrVT3O8XVhy5DcV00YN0I5Wjx',
 
 
   // Analytics Bounded Context
