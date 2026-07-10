@@ -18,7 +18,8 @@ export class ContractAssembler implements BaseAssembler<Contract, ContractResour
       typeOfContract: resource.typeOfContract,
       staffRole: resource.staffRole,
       workShift: resource.workShift,
-      status: resource.status
+      status: resource.status,
+      permissions: resource.permissions
     });
   }
 
@@ -33,7 +34,8 @@ export class ContractAssembler implements BaseAssembler<Contract, ContractResour
       typeOfContract: entity.typeOfContract,
       staffRole: entity.staffRole,
       workShift: entity.workShift,
-      status: entity.status
+      status: entity.status,
+      permissions: entity.permissions
     } as ContractResource;
   }
 }
