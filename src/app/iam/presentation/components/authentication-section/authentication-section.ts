@@ -34,5 +34,9 @@ export class AuthenticationSection {
   performSignOut(): void {
     this.store.signOut(this.router);
   }
+
+  goToSecuritySettings(): void {
+    this.router.navigate(['/iam/mfa-settings']).then();
+  }
 }
 
