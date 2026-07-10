@@ -208,19 +208,21 @@ export class NursingStore {
     });
   }
 
-  addMedication(nursingHomeId: number, createMedicationCommand: CreateMedicationCommand): void {
+  addMedication(nursingHomeId: number, createMedicationCommand: CreateMedicationCommand): Observable<Medication> {
     this._loadingSignal.set(true);
     this._errorSignal.set(null);
-    this.nursingApi.createMedication(nursingHomeId, createMedicationCommand).pipe(retry(2)).subscribe({
-      next: createdMedication => {
+    return this.nursingApi.createMedication(nursingHomeId, createMedicationCommand).pipe(
+      retry(2),
+      tap(createdMedication => {
         this._medicationsSignal.update(medications => [...medications, createdMedication]);
         this._loadingSignal.set(false);
-      },
-      error: err => {
+      }),
+      catchError(err => {
         this._errorSignal.set(this.formatError(err, 'Failed to create medication'));
         this._loadingSignal.set(false);
-      }
-    });
+        return throwError(() => err);
+      })
+    );
   }
 
   assignRoom(residentId: number, assignRoomCommand: AssignRoomCommand): void {
