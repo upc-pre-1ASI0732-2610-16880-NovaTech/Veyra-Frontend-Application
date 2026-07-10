@@ -14,10 +14,13 @@ export abstract class ErrorHandlingEnabledBaseType {
   protected handleError(operation: string) {
     return (error: HttpErrorResponse): Observable<never> => {
       let errorMessage = operation;
-      if (error.status === 404) {
-        errorMessage = `Resource not found: ${operation}`;
-      } else if (error.error instanceof ErrorEvent) {
+      if (error.error instanceof ErrorEvent) {
         errorMessage = `${operation}: ${error.error.message}`;
+      } else if (error.error?.detail) {
+        // Backend's ErrorResponse (RFC 7807 ProblemDetail) carries the human-readable message here
+        errorMessage = error.error.detail;
+      } else if (error.status === 404) {
+        errorMessage = `Resource not found: ${operation}`;
       } else {
         errorMessage = `${operation}: ${error.statusText || 'Unexpected error'}`;
       }
