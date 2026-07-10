@@ -14,6 +14,7 @@ import {MatButton} from '@angular/material/button';
 import {MatIcon} from '@angular/material/icon';
 import {provideNativeDateAdapter} from '@angular/material/core';
 import {DatePipe} from '@angular/common';
+import {NotificationService} from '../../../../shared/presentation/services/notification.service';
 
 @Component({
   selector: 'app-contract-form',
@@ -42,6 +43,7 @@ export class ContractForm {
   protected store = inject(HcmStore);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private notification = inject(NotificationService);
 
   form = this.fb.group({
     startDate:      new FormControl<Date>   (new Date(), { nonNullable: true, validators: [Validators.required] }),
@@ -96,9 +98,17 @@ export class ContractForm {
       workShift:      this.form.value.workShift!
     });
 
-    this.store.addContract(this.staffMemberId!, contractCommand);
-
-    this.router.navigate(['/hcm/staff']).then();
+    this.store.addContract(this.staffMemberId!, contractCommand).subscribe({
+      next: createdContract => {
+        const permissions = createdContract.permissions?.join(', ') || 'none';
+        this.notification.showSuccess(`Contract created. Permissions assigned: ${permissions}`);
+        this.router.navigate(['/hcm/staff']).then();
+      },
+      error: () => {
+        const message = this.store.error() ?? 'Failed to create contract.';
+        this.notification.showError(message, () => this.submit());
+      }
+    });
   }
 
   onCancel(): void {
