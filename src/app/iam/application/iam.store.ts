@@ -130,6 +130,19 @@ export class IamStore {
     });
   }
 
+  loadMfaStatus() {
+    this.iamApi.mfaStatus().subscribe({
+      next: (res) => {
+        this.mfaEnabledSignal.set(res.enabled);
+        this.mfaMethodSignal.set(res.method);
+      },
+      error: () => {
+        this.mfaEnabledSignal.set(false);
+        this.mfaMethodSignal.set('NONE');
+      }
+    });
+  }
+
   setupMfa() {
     this._loadingSignal.set(true);
     this._errorSignal.set(null);
