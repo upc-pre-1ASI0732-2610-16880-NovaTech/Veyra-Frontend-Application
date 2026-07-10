@@ -1,16 +1,17 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { loadStripe, Stripe, StripeCardCvcElement, StripeCardExpiryElement, StripeCardNumberElement, StripeElements } from '@stripe/stripe-js';
+import { environment } from '../../../../../environments/environment';
 import { PaymentStore } from '../../../application/payment.store';
 
 @Component({
@@ -20,14 +21,24 @@ import { PaymentStore } from '../../../application/payment.store';
   standalone: true,
   imports: [
     CommonModule, CurrencyPipe, ReactiveFormsModule, TranslatePipe,
-    MatFormFieldModule, MatInputModule, MatButtonModule, MatCardModule,
+    MatFormFieldModule, MatButtonModule, MatCardModule,
     MatIconModule, MatProgressSpinnerModule, MatDividerModule, MatCheckboxModule
   ]
 })
-export class PaymentCheckoutPage implements OnInit {
+export class PaymentCheckoutPage implements OnInit, AfterViewInit, OnDestroy {
   protected paymentStore = inject(PaymentStore);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
+
+  @ViewChild('cardNumberElement') cardNumberElementRef!: ElementRef<HTMLDivElement>;
+  @ViewChild('cardExpiryElement') cardExpiryElementRef!: ElementRef<HTMLDivElement>;
+  @ViewChild('cardCvcElement') cardCvcElementRef!: ElementRef<HTMLDivElement>;
+
+  private stripe: Stripe | null = null;
+  private elements: StripeElements | null = null;
+  private cardNumberElement: StripeCardNumberElement | null = null;
+  private cardExpiryElement: StripeCardExpiryElement | null = null;
+  private cardCvcElement: StripeCardCvcElement | null = null;
 
   planTitle = '';
   planType = '';
@@ -35,15 +46,16 @@ export class PaymentCheckoutPage implements OnInit {
   planPrice = 0;
   currency = 'USD';
 
+  cardBrand = 'generic';
+  cardElementsReady = false;
+  stripeInitError: string | null = null;
+
   isProcessing = false;
   successMessage: string | null = null;
   errorMessage: string | null = null;
 
   form = new FormGroup({
     cardholderName:  new FormControl('', [Validators.required, Validators.minLength(3)]),
-    cardNumber:      new FormControl('', [Validators.required]),
-    expiry:          new FormControl('', [Validators.required, Validators.pattern(/^\d{2}\/\d{2}$/)]),
-    cvc:             new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(4)]),
     acceptNoRefund:  new FormControl(false, [Validators.requiredTrue])
   });
 
@@ -68,39 +80,79 @@ export class PaymentCheckoutPage implements OnInit {
     });
   }
 
-  onCardNumberInput(event: Event): void {
-    const input  = event.target as HTMLInputElement;
-    const raw    = input.value.replace(/\D/g, '').slice(0, 16);
-    const pretty = raw.match(/.{1,4}/g)?.join(' ') ?? raw;
-    this.form.get('cardNumber')!.setValue(pretty, { emitEvent: false });
-    input.value = pretty;
+  async ngAfterViewInit(): Promise<void> {
+    this.stripe = await loadStripe(environment.stripePublicKey);
+    if (!this.stripe) {
+      this.stripeInitError = 'No se pudo inicializar Stripe. Verifica la clave pública configurada.';
+      return;
+    }
+
+    this.elements = this.stripe.elements();
+    const style = {
+      base: {
+        fontSize: '16px',
+        color: '#1a1a1a',
+        fontFamily: 'Roboto, sans-serif',
+        '::placeholder': { color: '#9e9e9e' }
+      },
+      invalid: { color: '#c62828' }
+    };
+
+    this.cardNumberElement = this.elements.create('cardNumber', { style, showIcon: true });
+    this.cardNumberElement.mount(this.cardNumberElementRef.nativeElement);
+    this.cardNumberElement.on('change', event => {
+      this.cardBrand = event.brand ?? 'generic';
+      this.stripeInitError = event.error ? event.error.message : null;
+    });
+
+    this.cardExpiryElement = this.elements.create('cardExpiry', { style });
+    this.cardExpiryElement.mount(this.cardExpiryElementRef.nativeElement);
+    this.cardExpiryElement.on('change', event => {
+      if (event.error) this.stripeInitError = event.error.message;
+    });
+
+    this.cardCvcElement = this.elements.create('cardCvc', { style });
+    this.cardCvcElement.mount(this.cardCvcElementRef.nativeElement);
+    this.cardCvcElement.on('change', event => {
+      if (event.error) this.stripeInitError = event.error.message;
+    });
+
+    this.cardElementsReady = true;
   }
 
-  onExpiryInput(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    let raw     = input.value.replace(/\D/g, '').slice(0, 4);
-    if (raw.length >= 3) raw = raw.slice(0, 2) + '/' + raw.slice(2);
-    this.form.get('expiry')!.setValue(raw, { emitEvent: false });
-    input.value = raw;
+  ngOnDestroy(): void {
+    this.cardNumberElement?.destroy();
+    this.cardExpiryElement?.destroy();
+    this.cardCvcElement?.destroy();
   }
 
-  onCvcInput(event: Event): void {
-    const input  = event.target as HTMLInputElement;
-    input.value  = input.value.replace(/\D/g, '').slice(0, 4);
-    this.form.get('cvc')!.setValue(input.value, { emitEvent: false });
-  }
-
-  submitPayment(): void {
-    if (this.form.invalid) { this.form.markAllAsTouched(); return; }
+  async submitPayment(): Promise<void> {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+    if (!this.stripe || !this.cardNumberElement) {
+      this.errorMessage = 'El formulario de pago aún no está listo. Intenta nuevamente en unos segundos.';
+      return;
+    }
 
     this.isProcessing = true;
     this.errorMessage = null;
     this.successMessage = null;
 
-    // Use Stripe test token so any card number is accepted in the UI
-    const mockId = `pm_card_visa`;
+    const { paymentMethod, error } = await this.stripe.createPaymentMethod({
+      type: 'card',
+      card: this.cardNumberElement,
+      billing_details: { name: this.form.value.cardholderName ?? undefined }
+    });
 
-    this.paymentStore.createSubscription(mockId, this.planType, this.period, () => {
+    if (error || !paymentMethod) {
+      this.isProcessing = false;
+      this.errorMessage = error?.message ?? 'No se pudo procesar la tarjeta.';
+      return;
+    }
+
+    this.paymentStore.createSubscription(paymentMethod.id, this.planType, this.period, () => {
       this.isProcessing  = false;
       this.successMessage = '¡Suscripción creada exitosamente!';
       setTimeout(() => this.router.navigate(['/nursing/nursing-homes/new']), 2000);
@@ -113,10 +165,6 @@ export class PaymentCheckoutPage implements OnInit {
   cancel(): void { history.back(); }
 
   get cardType(): string {
-    const n = (this.form.get('cardNumber')?.value ?? '').replace(/\s/g, '');
-    if (n.startsWith('4')) return 'visa';
-    if (/^(5[1-5]|2[2-7])/.test(n)) return 'mastercard';
-    if (/^3[47]/.test(n)) return 'amex';
-    return 'generic';
+    return this.cardBrand;
   }
 }

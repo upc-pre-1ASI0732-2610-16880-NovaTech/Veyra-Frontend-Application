@@ -8,7 +8,7 @@ import { Medication } from '../domain/model/medication.entity';
 import { MedicationResource } from './medications-response';
 import { CreateMedicationCommand } from '../domain/model/create-medication.command';
 
-const medicationCommandsEndpointUrl = `${environment.platformProviderApiBaseUrl}${environment.platformProviderResidentMedicationsEndpointPath}`;
+const medicationCommandsEndpointUrl = `${environment.platformProviderApiBaseUrl}${environment.platformProviderNursingHomeMedicationsEndpointPath}`;
 
 export class CreateMedicationCommandsApiEndpoint extends ErrorHandlingEnabledBaseType{
   private readonly medicationAssembler = new MedicationAssembler();
@@ -18,9 +18,9 @@ export class CreateMedicationCommandsApiEndpoint extends ErrorHandlingEnabledBas
     super();
   }
 
-  /** GET: /api/v1/residents/{residentId}/medications */
-  getAll(residentId: number): Observable<Medication[]> {
-    const url = medicationCommandsEndpointUrl.replace('{residentId}', residentId.toString());
+  /** GET: /api/v1/nursing-homes/{nursingHomeId}/medications */
+  getAll(nursingHomeId: number): Observable<Medication[]> {
+    const url = medicationCommandsEndpointUrl.replace('{nursingHomeId}', nursingHomeId.toString());
     return this.http.get<MedicationResource[]>(url).pipe(
       map(response => {
         if(Array.isArray(response)) {
@@ -32,10 +32,10 @@ export class CreateMedicationCommandsApiEndpoint extends ErrorHandlingEnabledBas
     );
   }
 
-  /** POST: /api/v1/residents/{residentId}/medications */
-  create(residentId: number, createMedicationCommand: CreateMedicationCommand): Observable<Medication> {
+  /** POST: /api/v1/nursing-homes/{nursingHomeId}/medications */
+  create(nursingHomeId: number, createMedicationCommand: CreateMedicationCommand): Observable<Medication> {
     const resource = this.medicationCommandAssembler.toResourceFromEntity(createMedicationCommand);
-    const url = medicationCommandsEndpointUrl.replace('{residentId}', residentId.toString());
+    const url = medicationCommandsEndpointUrl.replace('{nursingHomeId}', nursingHomeId.toString());
       return this.http.post<Medication>(url, resource).pipe(
       map(createdMedication => this.medicationAssembler.toEntityFromResource(createdMedication)),
       catchError(this.handleError('Failed to create medication'))

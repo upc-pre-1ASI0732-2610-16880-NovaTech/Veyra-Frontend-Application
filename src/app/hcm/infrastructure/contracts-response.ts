@@ -11,6 +11,7 @@ export interface ContractResource extends BaseResource {
   staffRole: string;
   workShift: string;
   status: string;
+  permissions: string[];
 }
 
 export interface ContractsResponse extends BaseResponse {

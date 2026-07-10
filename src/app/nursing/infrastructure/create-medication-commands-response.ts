@@ -5,4 +5,5 @@ export interface MedicationCommandResource {
   expirationDate: string;
   drugPresentation: string;
   dosage: string;
+  lot: string;
 }

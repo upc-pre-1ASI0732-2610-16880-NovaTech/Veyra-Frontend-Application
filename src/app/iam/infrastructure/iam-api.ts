@@ -60,6 +60,10 @@ export class IamApi extends BaseApi {
     return this.mfaEndpoint.setup();
   }
 
+  mfaSetupSms(phoneNumber: string): Observable<void> {
+    return this.mfaEndpoint.setupSms(phoneNumber);
+  }
+
   mfaEnable(code: string): Observable<void> {
     return this.mfaEndpoint.enable(code);
   }
@@ -70,5 +74,9 @@ export class IamApi extends BaseApi {
 
   mfaVerify(userId: number, code: string): Observable<MfaVerifyResource> {
     return this.mfaEndpoint.verify(userId, code);
+  }
+
+  mfaStatus() {
+    return this.mfaEndpoint.status();
   }
 }

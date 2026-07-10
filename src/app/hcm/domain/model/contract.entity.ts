@@ -9,6 +9,7 @@ export class Contract {
   private _staffRole: string;
   private _workShift: string;
   private _status: string;
+  private _permissions: string[];
 
   constructor(contract: {
     id: number;
@@ -21,6 +22,7 @@ export class Contract {
     staffRole: string;
     workShift: string;
     status: string;
+    permissions: string[];
   }) {
     this._id = contract.id;
     this._staffMemberId = contract.staffMemberId;
@@ -32,6 +34,7 @@ export class Contract {
     this._staffRole = contract.staffRole;
     this._workShift = contract.workShift;
     this._status = contract.status;
+    this._permissions = contract.permissions;
   }
 
   // Getters and Setters
@@ -97,5 +100,13 @@ export class Contract {
 
   set status(value: string) {
     this._status = value;
+  }
+
+  get permissions(): string[] {
+    return this._permissions;
+  }
+
+  set permissions(value: string[]) {
+    this._permissions = value;
   }
 }

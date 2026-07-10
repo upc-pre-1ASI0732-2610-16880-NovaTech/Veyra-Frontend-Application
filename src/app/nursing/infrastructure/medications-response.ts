@@ -2,13 +2,14 @@ import { BaseResource, BaseResponse } from '../../shared/infrastructure/base-res
 
 export interface MedicationResource extends BaseResource {
   id: number;
-  residentId: number;
+  nursingHomeId: number;
   name: string;
   description: string;
   amount: number;
   expirationDate: Date;
   drugPresentation: string;
   dosage: string;
+  lot: string;
 }
 
 export interface MedicationsResponse extends BaseResponse {

@@ -40,6 +40,7 @@ export class LayoutNursingHome {
     { label: 'nav.resident',    icon: 'person',       link: '/nursing/residents',   color: '#5FC2BA'},
     { label: 'nav.staff',       icon: 'group',        link: '/hcm/staff',           color: '#5FC2BA'},
     { label: 'nav.room',        icon: 'meeting_room', link: '/nursing/rooms',       color: '#5FC2BA'},
+    { label: 'nav.inventory',   icon: 'medication',   link: '/nursing/medications', color: '#5FC2BA'},
     { label: 'nav.activities',   icon: 'event',         link: '/activities',           color: '#5FC2BA'},
     { label: 'nav.subscription', icon: 'subscriptions', link: '/payments/management',  color: '#5FC2BA'},
   ];

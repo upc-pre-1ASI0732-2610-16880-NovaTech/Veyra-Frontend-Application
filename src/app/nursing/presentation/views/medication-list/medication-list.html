@@ -49,6 +49,21 @@
               </td>
             </ng-container>
 
+            <!-- Lot Column -->
+            <ng-container matColumnDef="lot">
+              <th mat-header-cell *matHeaderCellDef (click)="toggleSort('lot')">
+                <div class="header-content">
+                  Lot
+                  <mat-icon class="header-icon">
+                    @if (selectedColumn() !== 'lot') { unfold_more }
+                    @else if (sortDirection() === 'asc') { arrow_drop_up }
+                    @else { arrow_drop_down }
+                  </mat-icon>
+                </div>
+              </th>
+              <td mat-cell *matCellDef="let medication">{{ medication.lot }}</td>
+            </ng-container>
+
               <!-- Description Column -->
             <ng-container matColumnDef="description">
               <th mat-header-cell *matHeaderCellDef (click)="toggleSort('description')">
@@ -164,7 +179,7 @@
           {{ 'residents.buttons.go-back' | translate }}
         </button>
 
-        <button mat-raised-button color="accent" (click)="navigateToNew(residentId()!)">
+        <button mat-raised-button color="accent" (click)="navigateToNew()">
           <mat-icon>add</mat-icon>
           {{ 'medications.add' | translate }}
         </button>

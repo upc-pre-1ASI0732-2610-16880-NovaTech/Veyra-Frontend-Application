@@ -1,31 +1,34 @@
 export class Medication {
   private _id: number;
-  private _residentId: number;
+  private _nursingHomeId: number;
   private _name: string;
   private _description: string;
   private _amount: number;
   private _expirationDate: Date;
   private _drugPresentation: string;
   private _dosage: string;
+  private _lot: string;
 
   constructor(medication: {
     id: number;
-    residentId: number;
+    nursingHomeId: number;
     name: string;
     description: string;
     amount: number;
     expirationDate: Date;
     drugPresentation: string;
     dosage: string;
+    lot: string;
   }) {
     this._id = medication.id;
-    this._residentId = medication.residentId;
+    this._nursingHomeId = medication.nursingHomeId;
     this._name = medication.name;
     this._description = medication.description;
     this._amount = medication.amount;
     this._expirationDate = medication.expirationDate;
     this._drugPresentation = medication.drugPresentation;
     this._dosage = medication.dosage;
+    this._lot = medication.lot;
   }
 
   get id(): number {
@@ -36,12 +39,12 @@ export class Medication {
     this._id = value;
   }
 
-  get residentId(): number {
-    return this._residentId;
+  get nursingHomeId(): number {
+    return this._nursingHomeId;
   }
 
-  set residentId(value: number) {
-    this._residentId = value;
+  set nursingHomeId(value: number) {
+    this._nursingHomeId = value;
   }
 
   get name(): string {
@@ -90,5 +93,13 @@ export class Medication {
 
   set dosage(value: string) {
     this._dosage = value;
+  }
+
+  get lot(): string {
+    return this._lot;
+  }
+
+  set lot(value: string) {
+    this._lot = value;
   }
 }

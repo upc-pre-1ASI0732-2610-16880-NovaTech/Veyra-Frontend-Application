@@ -6,12 +6,15 @@ const signUpForm = () =>
   import('./views/sign-up-form/sign-up-form').then(m => m.SignUpForm);
 const mfaVerifyForm = () =>
   import('./views/mfa-verify-form/mfa-verify-form').then(m => m.MfaVerifyForm);
+const mfaSettings = () =>
+  import('./views/mfa-settings/mfa-settings').then(m => m.MfaSettings);
 
 const baseTitle = 'Veyra';
 const iamRoutes: Routes = [
   { path: 'sign-in', loadComponent: signInForm, title: `Sign In | ${baseTitle}` },
   { path: 'sign-up', loadComponent: signUpForm, title: `Sign Up | ${baseTitle}` },
-  { path: 'mfa-verify', loadComponent: mfaVerifyForm, title: `Verify Identity | ${baseTitle}` }
+  { path: 'mfa-verify', loadComponent: mfaVerifyForm, title: `Verify Identity | ${baseTitle}` },
+  { path: 'mfa-settings', loadComponent: mfaSettings, title: `Security Settings | ${baseTitle}` }
 ];
 
 export { iamRoutes };

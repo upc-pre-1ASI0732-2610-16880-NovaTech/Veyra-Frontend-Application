@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { MatOption, provideNativeDateAdapter } from '@angular/material/core';
 import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { NursingStore } from '../../../application/nursing.store';
 import { LayoutNursingHome } from '../../../../shared/presentation/components/layout-nursing-home/layout-nursing-home';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -15,6 +15,7 @@ import { MatIcon } from '@angular/material/icon';
 import { CreateMedicationCommand } from '../../../domain/model/create-medication.command';
 import { MatCard } from '@angular/material/card';
 import { MatSelect } from '@angular/material/select';
+import { NotificationService } from '../../../../shared/presentation/services/notification.service';
 
 @Component({
   selector: 'app-medication-form',
@@ -44,7 +45,7 @@ export class MedicationForm {
   private fb = inject(FormBuilder);
   protected store = inject(NursingStore);
   private router = inject(Router);
-  private route = inject(ActivatedRoute);
+  private notification = inject(NotificationService);
 
   minExpirationDate = new Date();
   startDate = new Date();
@@ -55,21 +56,11 @@ export class MedicationForm {
     amount:           new FormControl<number | null> (null, { nonNullable: true, validators: [Validators.required] }),
     expirationDate:   new FormControl<Date | null>   (null, { validators: [Validators.required] }),
     drugPresentation: new FormControl<string>        ('',   { nonNullable: true, validators: [Validators.required] }),
-    dosage:           new FormControl<string>        ('',   { nonNullable: true, validators: [Validators.required] })
+    dosage:           new FormControl<string>        ('',   { nonNullable: true, validators: [Validators.required] }),
+    lot:              new FormControl<string>        ('',   { nonNullable: true, validators: [Validators.required] })
   });
   medications = this.store.medications;
-  residentId: number | null = null;
-
-  constructor() {
-    this.route.params.subscribe(params => {
-      const id = params['id'] ? +params['id'] : null;
-      this.residentId = id;
-      if (!id) {
-        this.router.navigate(['nursing/medications']).then();
-        return;
-      }
-    });
-  }
+  nursingHomeId: number = Number(localStorage.getItem('nursingHomeId'));
 
   onExpirationDateSelected(date: Date | null): void {
     this.form.patchValue({expirationDate: date});
@@ -90,12 +81,20 @@ export class MedicationForm {
       amount: formValue.amount!,
       expirationDate: this.formatDateToISO(formValue.expirationDate!),
       drugPresentation: formValue.drugPresentation!,
-      dosage: formValue.dosage!
+      dosage: formValue.dosage!,
+      lot: formValue.lot!
     });
 
-    this.store.addMedication(this.residentId!, createMedicationCommand);
-
-    this.router.navigate(['nursing/residents', this.residentId, 'medications']).then();
+    this.store.addMedication(this.nursingHomeId, createMedicationCommand).subscribe({
+      next: () => {
+        this.notification.showSuccess('Medication added to inventory.');
+        this.router.navigate(['nursing/medications']).then();
+      },
+      error: () => {
+        const message = this.store.error() ?? 'Failed to create medication.';
+        this.notification.showError(message, () => this.submit());
+      }
+    });
   }
 
   private formatDateToISO(date: Date): string {
@@ -109,6 +108,6 @@ export class MedicationForm {
 
 
   onCancel(): void {
-    this.router.navigate(['nursing/residents', this.residentId, 'medications']).then();
+    this.router.navigate(['nursing/medications']).then();
   }
 }

@@ -1,5 +1,6 @@
 @if(store.isSignedIn()){
   <button mat-button>Welcome, {{ store.currentUsername() }}</button> |
+  <button mat-button (click)="goToSecuritySettings()">Security</button> |
   <button mat-button (click)="performSignOut()">Sign-Out</button>
 } @else {
   <section class="auth-container">

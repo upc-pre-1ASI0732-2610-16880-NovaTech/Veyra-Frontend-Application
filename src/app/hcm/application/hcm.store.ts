@@ -1,7 +1,7 @@
 import { computed, Injectable, Signal, signal } from '@angular/core';
 import { StaffMember } from '../domain/model/staff-member.entity';
 import { HcmApi } from '../infrastructure/hcm-api';
-import { retry } from 'rxjs';
+import { catchError, Observable, retry, tap, throwError } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Contract } from '../domain/model/contract.entity';
 import { CreateStaffMemberCommand } from '../domain/model/create-staff-member.command';
@@ -72,19 +72,21 @@ export class HcmStore {
     });
   }
 
-  addContract(staffMemberId: number, contractCommand: CreateContractCommand): void {
+  addContract(staffMemberId: number, contractCommand: CreateContractCommand): Observable<Contract> {
     this._loadingSignal.set(true);
     this._errorSignal.set(null);
-    this.hcmApi.createContract(staffMemberId, contractCommand).pipe(retry(2)).subscribe({
-      next: createdContract => {
+    return this.hcmApi.createContract(staffMemberId, contractCommand).pipe(
+      retry(2),
+      tap(createdContract => {
         this._contractSignal.update(contracts => [...contracts, createdContract]);
         this._loadingSignal.set(false);
-      },
-      error: err => {
+      }),
+      catchError(err => {
         this._errorSignal.set(this.formatError(err, 'Failed to create contract'));
         this._loadingSignal.set(false);
-      }
-    });
+        return throwError(() => err);
+      })
+    );
   }
 
   updateContractStatus(staffMemberId: number, contractId: number, updateContractStatusCommand: UpdateContractStatusCommand): void {

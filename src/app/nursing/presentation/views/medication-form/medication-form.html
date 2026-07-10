@@ -110,6 +110,16 @@
                 }
               </mat-form-field>
             </div>
+
+            <div class="detail-row">
+              <mat-form-field appearance="outline">
+                <mat-label>Lot</mat-label>
+                <input matInput formControlName="lot" placeholder="e.g., L-2026-001" required>
+                @if (form.get('lot')?.touched && form.get('lot')!.hasError('required')) {
+                  <mat-error>Lot is required</mat-error>
+                }
+              </mat-form-field>
+            </div>
           </div>
         </mat-card>
 

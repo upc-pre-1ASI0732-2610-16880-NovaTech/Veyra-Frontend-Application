@@ -1,12 +1,14 @@
 export const environment = {
   production: false,
   platformProviderApiBaseUrl: 'https://veyra-backend-app.azurewebsites.net/api/v1',
-  stripePublicKey: 'pk_test_REPLACE_WITH_YOUR_STRIPE_PUBLIC_KEY',
+  stripePublicKey: 'pk_test_51TSlv2H9VotIcKnvY65C2bj77Mvxdt0GHBoo8y5qPw3WF6qQF80v11nsn4LJ8bxqTGW8sSGlwYrVT3O8XVhy5DcV00YN0I5Wjx',
 
   // Analytics Bounded Context
   platformProviderAnalyticsStaffTerminationsEndpointPath: '/nursing-homes/{nursingHomeId}/analytics/staff-terminations',
   platformProviderAnalyticsStaffHiresEndpointPath: '/nursing-homes/{nursingHomeId}/analytics/staff-hires',
   platformProviderAnalyticsResidentsAdmissionsEndpointPath: '/nursing-homes/{nursingHomeId}/analytics/residents-admissions',
+  platformProviderNursingHomeOccupancyEndpointPath: '/nursing-homes/{nursingHomeId}/dashboard/occupancy',
+  platformProviderNursingHomeAlertsEndpointPath: '/nursing-homes/{nursingHomeId}/dashboard/alerts',
 
   // Hcm Bounded Context
   platformProviderContractsEndpointPath: '/contracts',
@@ -22,6 +24,8 @@ export const environment = {
   platformProviderMfaEnableEndpointPath: '/authentication/mfa/enable',
   platformProviderMfaDisableEndpointPath: '/authentication/mfa/disable',
   platformProviderMfaVerifyEndpointPath: '/authentication/mfa/verify',
+  platformProviderMfaSmsSetupEndpointPath: '/authentication/mfa/sms/setup',
+  platformProviderMfaStatusEndpointPath: '/authentication/mfa/status',
 
   // Payments Bounded Context
   platformProviderPlansEndpointPath: '/plans',
@@ -45,7 +49,8 @@ export const environment = {
   platformProviderResidentAllergiesEndpointPath: '/residents/{residentId}/allergies',
   platformProviderAdministratorNursingHomesEndpointPath: '/administrators/{administratorId}/nursing-homes',
   platformProviderResidentRoomsEndpointPath: '/residents/{residentId}/room',
-  platformProviderResidentMedicationsEndpointPath: '/residents/{residentId}/medications',
+  platformProviderNursingHomeMedicationsEndpointPath: '/nursing-homes/{nursingHomeId}/medications',
+  platformProviderMedicationAdministrationsEndpointPath: '/residents/{residentId}/medications/{medicationId}/administrations',
   platformProviderNursingHomeResidentsEndpointPath: '/nursing-homes/{nursingHomeId}/residents',
   platformProviderNursingHomeStaffEndpointPath: '/nursing-homes/{nursingHomeId}/staff',
   platformProviderNursingHomeRoomsEndpointPath: '/nursing-homes/{nursingHomeId}/rooms',
