@@ -1,0 +1,209 @@
+.form-wrapper {
+  margin-right: 40px;
+  background-color: transparent;
+}
+
+.title {
+  padding-bottom: 12px;
+  border-bottom: 4px solid #66B3AD;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #0d2e73;
+  margin-right: 40px;
+}
+
+.subtitle {
+  color: #5f6368;
+  margin: 8px 0 0;
+}
+
+.stock-hint {
+  color: #5f6368;
+  font-weight: 600;
+  margin: 0;
+}
+
+/* Error State */
+.error-card {
+  margin: 20px 0;
+  border-left: 4px solid #ef5350 !important;
+  background-color: #ffebee !important;
+  border-radius: 12px !important;
+  padding: 16px;
+}
+
+.error-card p {
+  margin: 0;
+  color: #c62828;
+  font-weight: 500;
+}
+
+/* Success State */
+.success-card {
+  margin: 20px 0;
+  border-left: 4px solid #66bb6a !important;
+  background-color: #e8f5e9 !important;
+  border-radius: 12px !important;
+  padding: 16px;
+}
+
+.success-card p {
+  margin: 0;
+  color: #2e7d32;
+  font-weight: 500;
+}
+
+/* Info Grid */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 24px;
+  margin-bottom: 32px;
+  margin-top: 32px;
+}
+
+/* Cards */
+.info-card {
+  border-radius: 16px !important;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  border: 2px solid #e0e0e0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+  background-color: white !important;
+}
+
+/* Card Header */
+.card-header-custom {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  background: #f0f8ff;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.card-header-custom h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #0d2e73;
+}
+
+.icon-wrapper {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  border: 2px solid #70b1e6;
+  color: #70b1e6;
+  flex-shrink: 0;
+}
+
+.icon-wrapper mat-icon {
+  font-size: 24px;
+  width: 24px;
+  height: 24px;
+}
+
+/* Card Body */
+.card-body {
+  padding: 24px;
+  background: white;
+}
+
+/* Form Fields */
+mat-form-field {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.detail-row {
+  margin-bottom: 16px;
+}
+
+/* No Medications Message */
+.no-rooms-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.no-rooms-message mat-icon {
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
+  color: #ffa726;
+}
+
+.no-rooms-message p {
+  font-size: 1.1rem;
+  color: #5f6368;
+  margin: 0;
+}
+
+/* Action Buttons */
+.action-buttons {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  display: flex;
+  gap: 12px;
+  padding: 16px 24px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  z-index: 100;
+  border: 2px solid #e0e0e0;
+}
+
+.action-buttons button {
+  border-radius: 10px !important;
+  font-weight: 600 !important;
+  height: 44px !important;
+  padding: 0 20px !important;
+}
+
+.space {
+  padding-bottom: 120px;
+}
+
+@media (max-width: 768px) {
+  .title {
+    font-size: 2rem;
+    margin-right: 0;
+  }
+
+  .form-wrapper {
+    padding: 0 16px;
+    margin-right: 0;
+  }
+
+  .info-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .action-buttons {
+    bottom: 16px;
+    right: 16px;
+    left: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 12px 16px;
+  }
+
+  .action-buttons button {
+    flex: 1 1 auto;
+    min-width: 120px;
+  }
+
+  .space {
+    padding-bottom: 180px;
+  }
+}
