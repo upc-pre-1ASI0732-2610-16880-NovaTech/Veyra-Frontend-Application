@@ -75,4 +75,8 @@ export class IamApi extends BaseApi {
   mfaVerify(userId: number, code: string): Observable<MfaVerifyResource> {
     return this.mfaEndpoint.verify(userId, code);
   }
+
+  mfaStatus() {
+    return this.mfaEndpoint.status();
+  }
 }

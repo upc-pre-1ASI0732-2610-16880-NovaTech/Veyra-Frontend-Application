@@ -13,6 +13,11 @@ export interface MfaVerifyResource {
   token: string;
 }
 
+export interface MfaStatusResource {
+  enabled: boolean;
+  method: string;
+}
+
 export class MfaApiEndpoint {
   constructor(private http: HttpClient) {}
 
@@ -34,5 +39,9 @@ export class MfaApiEndpoint {
 
   verify(userId: number, code: string): Observable<MfaVerifyResource> {
     return this.http.post<MfaVerifyResource>(`${base}${environment.platformProviderMfaVerifyEndpointPath}`, { userId, code });
+  }
+
+  status(): Observable<MfaStatusResource> {
+    return this.http.get<MfaStatusResource>(`${base}${environment.platformProviderMfaStatusEndpointPath}`);
   }
 }
