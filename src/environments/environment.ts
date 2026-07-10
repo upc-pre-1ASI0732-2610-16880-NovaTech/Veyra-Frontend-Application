@@ -26,6 +26,7 @@ export const environment = {
   platformProviderMfaDisableEndpointPath: '/authentication/mfa/disable',
   platformProviderMfaVerifyEndpointPath: '/authentication/mfa/verify',
   platformProviderMfaSmsSetupEndpointPath: '/authentication/mfa/sms/setup',
+  platformProviderMfaStatusEndpointPath: '/authentication/mfa/status',
 
   // Payments Bounded Context
   platformProviderPlansEndpointPath: '/plans',
