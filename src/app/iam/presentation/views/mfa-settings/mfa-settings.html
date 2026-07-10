@@ -1,0 +1,74 @@
+<div class="mfa-settings-container">
+  <div class="mfa-settings-card">
+    <h2>Two-Factor Authentication</h2>
+
+    @if (store.error()) {
+      <div class="error-banner">{{ store.error() }}</div>
+    }
+
+    @if (store.mfaEnabled()) {
+      <p>MFA is <strong>active</strong> using <strong>{{ store.mfaMethod() }}</strong>.</p>
+      <button type="button" class="danger-btn" [disabled]="store.loading()" (click)="disable()">
+        {{ store.loading() ? 'Disabling…' : 'Disable MFA' }}
+      </button>
+    } @else if (mode() === 'idle') {
+      <p>Add an extra layer of security to your account. Choose a method:</p>
+      <div class="choice-row">
+        <button type="button" (click)="startTotpSetup()">Authenticator App</button>
+        <button type="button" (click)="startSmsSetup()">SMS</button>
+      </div>
+    } @else if (mode() === 'totp') {
+      @if (store.mfaSetupData(); as setup) {
+        <p>Scan this in Google Authenticator / Authy, or enter the secret manually:</p>
+        <code class="secret-box">{{ setup.secret }}</code>
+        <p class="hint">otpauth URL: {{ setup.otpAuthUrl }}</p>
+
+        <form [formGroup]="codeForm" (ngSubmit)="confirmCode()">
+          <div class="form-field">
+            <label for="totp-code">Enter the 6-digit code</label>
+            <input id="totp-code" type="text" formControlName="code" placeholder="000000" maxlength="6" autocomplete="one-time-code" />
+            @if (codeForm.get('code')?.invalid && codeForm.get('code')?.touched) {
+              <span class="error">Enter the 6-digit code from your authenticator app.</span>
+            }
+          </div>
+          <button type="submit" [disabled]="store.loading()">
+            {{ store.loading() ? 'Activating…' : 'Activate' }}
+          </button>
+        </form>
+      } @else {
+        <p>Generating secret…</p>
+      }
+      <button class="back-link" (click)="cancel()">Cancel</button>
+    } @else if (mode() === 'sms') {
+      @if (!store.smsMfaPending()) {
+        <form [formGroup]="phoneForm" (ngSubmit)="sendSmsCode()">
+          <div class="form-field">
+            <label for="phone-number">Phone number (E.164 format)</label>
+            <input id="phone-number" type="tel" formControlName="phoneNumber" placeholder="+14155552671" autocomplete="tel" />
+            @if (phoneForm.get('phoneNumber')?.invalid && phoneForm.get('phoneNumber')?.touched) {
+              <span class="error">Enter a valid phone number, e.g. +14155552671.</span>
+            }
+          </div>
+          <button type="submit" [disabled]="store.loading()">
+            {{ store.loading() ? 'Sending…' : 'Send Code' }}
+          </button>
+        </form>
+      } @else {
+        <p>We sent a 6-digit code to your phone.</p>
+        <form [formGroup]="codeForm" (ngSubmit)="confirmCode()">
+          <div class="form-field">
+            <label for="sms-code">Enter the 6-digit code</label>
+            <input id="sms-code" type="text" formControlName="code" placeholder="000000" maxlength="6" autocomplete="one-time-code" />
+            @if (codeForm.get('code')?.invalid && codeForm.get('code')?.touched) {
+              <span class="error">Enter the 6-digit code sent via SMS.</span>
+            }
+          </div>
+          <button type="submit" [disabled]="store.loading()">
+            {{ store.loading() ? 'Activating…' : 'Activate' }}
+          </button>
+        </form>
+      }
+      <button class="back-link" (click)="cancel()">Cancel</button>
+    }
+  </div>
+</div>
