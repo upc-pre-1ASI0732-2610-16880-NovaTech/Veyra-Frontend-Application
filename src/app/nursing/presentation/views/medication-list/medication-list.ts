@@ -1,5 +1,5 @@
 import { Component, computed, inject, signal, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatError, MatFormField, MatLabel, MatPrefix, MatSuffix } from '@angular/material/form-field';
@@ -38,12 +38,12 @@ import { NursingStore } from '../../../application/nursing.store';
 export class MedicationList {
   readonly store = inject(NursingStore);
   protected router = inject(Router);
-  private route = inject(ActivatedRoute);
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   displayedColumns: string[] = [
     'name',
+    'lot',
     'description',
     'amount',
     'expirationDate',
@@ -51,19 +51,10 @@ export class MedicationList {
     'dosage'
   ];
 
-  residentId = signal<number | null>(null);
+  nursingHomeId: number = Number(localStorage.getItem('nursingHomeId'));
 
   constructor() {
-    this.route.params.subscribe(params => {
-      const id = params['id'] ? +params['id'] : null;
-      this.residentId.set(id);
-      if (!id) {
-        this.router.navigate(['nursing/residents']).then();
-        return;
-      }
-    });
-
-    this.store.loadMedications(this.residentId()!);
+    this.store.loadMedications(this.nursingHomeId);
   }
   searchTerm = signal('');
   selectedColumn = signal<string>('name');
@@ -72,7 +63,7 @@ export class MedicationList {
 
   filteredMedications = computed(() => {
     const term = this.removeAccents(this.searchTerm().toLowerCase().trim());
-    const meds = this.store.medications().filter(medication => medication.residentId === this.residentId());
+    const meds = this.store.medications();
     const col = this.selectedColumn();
     const dir = this.sortDirection();
     let result = meds;
@@ -113,8 +104,8 @@ export class MedicationList {
     }
   }
 
-  navigateToNew(id: number) {
-    this.router.navigate(['nursing/residents', id, 'medications','new']).then();
+  navigateToNew() {
+    this.router.navigate(['nursing/medications/new']).then();
   }
 
   goBack() {
