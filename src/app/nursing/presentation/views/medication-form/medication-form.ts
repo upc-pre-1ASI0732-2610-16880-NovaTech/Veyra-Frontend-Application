@@ -15,6 +15,7 @@ import { MatIcon } from '@angular/material/icon';
 import { CreateMedicationCommand } from '../../../domain/model/create-medication.command';
 import { MatCard } from '@angular/material/card';
 import { MatSelect } from '@angular/material/select';
+import { NotificationService } from '../../../../shared/presentation/services/notification.service';
 
 @Component({
   selector: 'app-medication-form',
@@ -44,6 +45,7 @@ export class MedicationForm {
   private fb = inject(FormBuilder);
   protected store = inject(NursingStore);
   private router = inject(Router);
+  private notification = inject(NotificationService);
 
   minExpirationDate = new Date();
   startDate = new Date();
@@ -83,9 +85,16 @@ export class MedicationForm {
       lot: formValue.lot!
     });
 
-    this.store.addMedication(this.nursingHomeId, createMedicationCommand);
-
-    this.router.navigate(['nursing/medications']).then();
+    this.store.addMedication(this.nursingHomeId, createMedicationCommand).subscribe({
+      next: () => {
+        this.notification.showSuccess('Medication added to inventory.');
+        this.router.navigate(['nursing/medications']).then();
+      },
+      error: () => {
+        const message = this.store.error() ?? 'Failed to create medication.';
+        this.notification.showError(message, () => this.submit());
+      }
+    });
   }
 
   private formatDateToISO(date: Date): string {

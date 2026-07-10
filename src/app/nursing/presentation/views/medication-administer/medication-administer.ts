@@ -10,6 +10,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatError, MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatOption, MatSelect } from '@angular/material/select';
 import { MatInput } from '@angular/material/input';
+import { NotificationService } from '../../../../shared/presentation/services/notification.service';
 
 @Component({
   selector: 'app-medication-administer',
@@ -33,6 +34,7 @@ export class MedicationAdminister {
   protected store = inject(NursingStore);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private notification = inject(NotificationService);
   residentId: number | null = null;
   nursingHomeId: number = Number(localStorage.getItem('nursingHomeId'));
   submitted = false;
@@ -76,18 +78,20 @@ export class MedicationAdminister {
       return;
     }
 
-    const command = new AdministerMedicationCommand({
-      quantity: this.form.value.quantity!
-    });
+    const medicationId = this.form.value.medicationId!;
+    const quantity = this.form.value.quantity!;
+    const residentId = this.residentId;
 
     this.submitted = false;
-    this.store.administerMedication(this.residentId, this.form.value.medicationId!, this.nursingHomeId, command).subscribe({
+    this.store.administerMedication(residentId, medicationId, this.nursingHomeId, new AdministerMedicationCommand({ quantity })).subscribe({
       next: () => {
         this.submitted = true;
+        this.notification.showSuccess('Intake registered successfully.');
         this.form.reset({ medicationId: null, quantity: 1 });
       },
       error: () => {
-        // Error message is already surfaced via store.error()
+        const message = this.store.error() ?? 'Failed to register medication intake.';
+        this.notification.showError(message, () => this.submit());
       }
     });
   }
