@@ -53,20 +53,22 @@ export class NursingStore {
 * @purpose: Add a new nursing home
 * @description: This method sets the loading state to true, clears any previous errors, and calls the API to create a new nursing home. On success, it updates the nursing homes signal and sets loading to false. On error, it sets an appropriate error message and sets loading to false.
 * */
-  addNursingHome(administratorId: number, createNursingHomeCommand: CreateNursingHomeCommand):void{
+  addNursingHome(administratorId: number, createNursingHomeCommand: CreateNursingHomeCommand): Observable<NursingHome> {
     this._loadingSignal.set(true);
     this._errorSignal.set(null);
-    this.nursingApi.createNursingHome(administratorId, createNursingHomeCommand).pipe(retry(2)).subscribe({
-      next:createdNursingHome=>{
-        this._nursingHomesSignal.update(nursingHome=>[...nursingHome,createdNursingHome]);
+    return this.nursingApi.createNursingHome(administratorId, createNursingHomeCommand).pipe(
+      retry(2),
+      tap(createdNursingHome => {
+        this._nursingHomesSignal.update(nursingHome => [...nursingHome, createdNursingHome]);
         localStorage.setItem('nursingHomeId', createdNursingHome.id.toString());
         this._loadingSignal.set(false);
-      },
-      error:err=>{
-        this._errorSignal.set(this.formatError(err,'Failed to create nursing home'));
+      }),
+      catchError(err => {
+        this._errorSignal.set(this.formatError(err, 'Failed to create nursing home'));
         this._loadingSignal.set(false);
-      }
-    });
+        return throwError(() => err);
+      })
+    );
   }
 
   getNursingHomeById(administratorId: number) {
