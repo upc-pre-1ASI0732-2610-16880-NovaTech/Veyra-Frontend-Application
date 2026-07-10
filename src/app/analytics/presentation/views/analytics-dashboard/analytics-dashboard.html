@@ -67,7 +67,35 @@
             <span class="subtitle">{{ 'Current' | translate }}</span>
           </mat-card-content>
         </mat-card>
+
+        @if (occupancy) {
+          <mat-card class="card card-teal">
+            <mat-card-title>Occupancy</mat-card-title>
+            <mat-card-content>
+              <p class="big">{{ occupancy.occupancyRate }}%</p>
+              <span class="subtitle">{{ occupancy.occupiedSlots }}/{{ occupancy.totalCapacity }} occupied</span>
+            </mat-card-content>
+          </mat-card>
+        }
       </div>
+
+      <!-- CRITICAL ALERTS -->
+      @if (alerts.length > 0) {
+        <div class="alerts-panel">
+          <div class="section-title">
+            <mat-icon color="warn">warning</mat-icon>
+            <h2>Critical Alerts</h2>
+          </div>
+          <div class="alerts-list">
+            @for (alert of alerts; track alert.medicationId + alert.alertType) {
+              <div class="alert-item" [class.alert-low-stock]="alert.alertType === 'LOW_STOCK'" [class.alert-expiring]="alert.alertType === 'EXPIRING_SOON'">
+                <mat-icon>{{ alert.alertType === 'LOW_STOCK' ? 'inventory_2' : 'event_busy' }}</mat-icon>
+                <span>{{ alert.message }}</span>
+              </div>
+            }
+          </div>
+        </div>
+      }
 
       <mat-divider></mat-divider>
 

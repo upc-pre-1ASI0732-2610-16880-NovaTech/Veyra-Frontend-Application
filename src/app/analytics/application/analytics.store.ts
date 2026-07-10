@@ -1,6 +1,8 @@
 import { Injectable, signal } from '@angular/core';
 import { AnalyticsApi } from '../infrastructure/analytics-api';
 import { Metric } from '../domain/model/metric.entity';
+import { Occupancy } from '../domain/model/occupancy.entity';
+import { MedicationAlert } from '../domain/model/medication-alert.entity';
 import { retry } from 'rxjs';
 
 @Injectable({
@@ -12,6 +14,8 @@ export class AnalyticsStore {
   private readonly _staffHiresSignal = signal<Metric | null>(null);
   private readonly _residentsAdmissionsSignal = signal<Metric | null>(null);
   private readonly _residentsActiveSignal = signal<Metric | null>(null);
+  private readonly _occupancySignal = signal<Occupancy | null>(null);
+  private readonly _alertsSignal = signal<MedicationAlert[]>([]);
 
   private readonly _loadingSignal = signal<boolean>(false);
   private readonly _errorSignal = signal<string | null>(null);
@@ -21,6 +25,8 @@ export class AnalyticsStore {
   readonly staffHires = this._staffHiresSignal.asReadonly();
   readonly residentsAdmissions = this._residentsAdmissionsSignal.asReadonly();
   readonly residentsActive = this._residentsActiveSignal.asReadonly();
+  readonly occupancy = this._occupancySignal.asReadonly();
+  readonly alerts = this._alertsSignal.asReadonly();
   readonly loading = this._loadingSignal.asReadonly();
   readonly error = this._errorSignal.asReadonly();
 
@@ -71,6 +77,20 @@ export class AnalyticsStore {
         this._errorSignal.set(this.formatError(err, 'Failed to fetch residents admissions'));
         this._loadingSignal.set(false);
       }
+    });
+  }
+
+  getOccupancy(nursingHomeId: number) {
+    this.analyticsApi.getOccupancy(nursingHomeId).pipe(retry(2)).subscribe({
+      next: occupancy => this._occupancySignal.set(occupancy),
+      error: err => this._errorSignal.set(this.formatError(err, 'Failed to fetch occupancy'))
+    });
+  }
+
+  getAlerts(nursingHomeId: number) {
+    this.analyticsApi.getAlerts(nursingHomeId).pipe(retry(2)).subscribe({
+      next: alerts => this._alertsSignal.set(alerts),
+      error: err => this._errorSignal.set(this.formatError(err, 'Failed to fetch alerts'))
     });
   }
 

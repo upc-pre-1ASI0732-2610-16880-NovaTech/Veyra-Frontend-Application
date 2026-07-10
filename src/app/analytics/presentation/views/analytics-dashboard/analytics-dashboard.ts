@@ -58,6 +58,8 @@ export class AnalyticsDashboard {
     this.store.getStaffTerminations(this.nursingHomeId, this.selectedYear);
     this.store.getStaffHires(this.nursingHomeId, this.selectedYear);
     this.store.getResidentsAdmissions(this.nursingHomeId, this.selectedYear);
+    this.store.getOccupancy(this.nursingHomeId);
+    this.store.getAlerts(this.nursingHomeId);
   }
 
   onYearChange() {
@@ -81,6 +83,14 @@ export class AnalyticsDashboard {
 
   get residentsActiveMetric() {
     return this.store.residentsActive();
+  }
+
+  get occupancy() {
+    return this.store.occupancy();
+  }
+
+  get alerts() {
+    return this.store.alerts();
   }
 
   get loading() {
