@@ -7,6 +7,8 @@ export const environment = {
   platformProviderAnalyticsStaffTerminationsEndpointPath: '/nursing-homes/{nursingHomeId}/analytics/staff-terminations',
   platformProviderAnalyticsStaffHiresEndpointPath: '/nursing-homes/{nursingHomeId}/analytics/staff-hires',
   platformProviderAnalyticsResidentsAdmissionsEndpointPath: '/nursing-homes/{nursingHomeId}/analytics/residents-admissions',
+  platformProviderNursingHomeOccupancyEndpointPath: '/nursing-homes/{nursingHomeId}/dashboard/occupancy',
+  platformProviderNursingHomeAlertsEndpointPath: '/nursing-homes/{nursingHomeId}/dashboard/alerts',
 
   // Hcm Bounded Context
   platformProviderContractsEndpointPath: '/contracts',
@@ -45,7 +47,8 @@ export const environment = {
   platformProviderResidentAllergiesEndpointPath: '/residents/{residentId}/allergies',
   platformProviderAdministratorNursingHomesEndpointPath: '/administrators/{administratorId}/nursing-homes',
   platformProviderResidentRoomsEndpointPath: '/residents/{residentId}/room',
-  platformProviderResidentMedicationsEndpointPath: '/residents/{residentId}/medications',
+  platformProviderNursingHomeMedicationsEndpointPath: '/nursing-homes/{nursingHomeId}/medications',
+  platformProviderMedicationAdministrationsEndpointPath: '/residents/{residentId}/medications/{medicationId}/administrations',
   platformProviderNursingHomeResidentsEndpointPath: '/nursing-homes/{nursingHomeId}/residents',
   platformProviderNursingHomeStaffEndpointPath: '/nursing-homes/{nursingHomeId}/staff',
   platformProviderNursingHomeRoomsEndpointPath: '/nursing-homes/{nursingHomeId}/rooms',
