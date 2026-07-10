@@ -87,8 +87,8 @@ export class ResidentList {
     this.router.navigate(['nursing/residents', id, 'show']).then();
   }
 
-  viewMedications(id: number) {
-    this.router.navigate(['nursing/residents', id, 'medications']).then();
+  administerMedication(id: number) {
+    this.router.navigate(['nursing/residents', id, 'medications', 'administer']).then();
   }
 
   editResident(id: number) {
