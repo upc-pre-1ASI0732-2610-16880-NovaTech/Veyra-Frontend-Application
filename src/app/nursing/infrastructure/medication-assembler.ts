@@ -10,26 +10,28 @@ export class MedicationAssembler implements BaseAssembler<Medication, Medication
   toEntityFromResource(resource: MedicationResource): Medication {
     return new Medication({
       id: resource.id,
-      residentId: resource.residentId,
+      nursingHomeId: resource.nursingHomeId,
       name: resource.name,
       description: resource.description,
       amount: resource.amount,
       expirationDate: resource.expirationDate,
       drugPresentation: resource.drugPresentation,
-      dosage: resource.dosage
+      dosage: resource.dosage,
+      lot: resource.lot
     });
   }
 
   toResourceFromEntity(entity: Medication): MedicationResource {
     return {
       id: entity.id,
-      residentId: entity.residentId,
+      nursingHomeId: entity.nursingHomeId,
       name: entity.name,
       description: entity.description,
       amount: entity.amount,
       expirationDate: entity.expirationDate,
       drugPresentation: entity.drugPresentation,
-      dosage: entity.dosage
+      dosage: entity.dosage,
+      lot: entity.lot
     } as MedicationResource;
   }
 }
