@@ -9,7 +9,8 @@ export class CreateMedicationCommandAssembler {
       amount: command.amount,
       expirationDate: command.expirationDate,
       drugPresentation: command.drugPresentation,
-      dosage: command.dosage
+      dosage: command.dosage,
+      lot: command.lot
     } as MedicationCommandResource;
   }
 }

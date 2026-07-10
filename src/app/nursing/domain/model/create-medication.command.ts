@@ -5,6 +5,7 @@ export class CreateMedicationCommand {
   private _expirationDate: string;
   private _drugPresentation: string;
   private _dosage: string;
+  private _lot: string;
 
   constructor(medicationCommand: {
     name: string;
@@ -13,6 +14,7 @@ export class CreateMedicationCommand {
     expirationDate: string;
     drugPresentation: string;
     dosage: string;
+    lot: string;
   }) {
     this._name = medicationCommand.name;
     this._description = medicationCommand.description;
@@ -20,6 +22,7 @@ export class CreateMedicationCommand {
     this._expirationDate = medicationCommand.expirationDate;
     this._drugPresentation = medicationCommand.drugPresentation;
     this._dosage = medicationCommand.dosage;
+    this._lot = medicationCommand.lot;
   }
 
   get name(): string {
@@ -68,5 +71,13 @@ export class CreateMedicationCommand {
 
   set dosage(value: string) {
     this._dosage = value;
+  }
+
+  get lot(): string {
+    return this._lot;
+  }
+
+  set lot(value: string) {
+    this._lot = value;
   }
 }
