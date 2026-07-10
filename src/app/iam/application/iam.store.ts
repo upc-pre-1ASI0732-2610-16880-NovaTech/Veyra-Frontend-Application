@@ -18,6 +18,8 @@ export class IamStore {
   private readonly usersSignal = signal<Array<User>>([]);
   private readonly mfaSetupDataSignal = signal<MfaSetupResource | null>(null);
   private readonly smsMfaPendingSignal = signal<boolean>(false);
+  private readonly mfaEnabledSignal = signal<boolean>(false);
+  private readonly mfaMethodSignal = signal<string>('NONE');
 
   readonly isSignedIn = this.isSignedInSignal.asReadonly();
   readonly loadingUsers = signal<boolean>(false);
@@ -30,6 +32,8 @@ export class IamStore {
   readonly isLoadingUsers = this.loadingUsers.asReadonly();
   readonly mfaSetupData = this.mfaSetupDataSignal.asReadonly();
   readonly smsMfaPending = this.smsMfaPendingSignal.asReadonly();
+  readonly mfaEnabled = this.mfaEnabledSignal.asReadonly();
+  readonly mfaMethod = this.mfaMethodSignal.asReadonly();
 
     constructor(private iamApi: IamApi, private paymentsApi: PaymentsApi) {
       const token = localStorage.getItem('token');
