@@ -20,6 +20,10 @@ export class MfaApiEndpoint {
     return this.http.post<MfaSetupResource>(`${base}${environment.platformProviderMfaSetupEndpointPath}`, {});
   }
 
+  setupSms(phoneNumber: string): Observable<void> {
+    return this.http.post<void>(`${base}${environment.platformProviderMfaSmsSetupEndpointPath}`, { phoneNumber });
+  }
+
   enable(code: string): Observable<void> {
     return this.http.post<void>(`${base}${environment.platformProviderMfaEnableEndpointPath}`, { code });
   }

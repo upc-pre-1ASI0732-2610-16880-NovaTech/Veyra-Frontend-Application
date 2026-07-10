@@ -60,6 +60,10 @@ export class IamApi extends BaseApi {
     return this.mfaEndpoint.setup();
   }
 
+  mfaSetupSms(phoneNumber: string): Observable<void> {
+    return this.mfaEndpoint.setupSms(phoneNumber);
+  }
+
   mfaEnable(code: string): Observable<void> {
     return this.mfaEndpoint.enable(code);
   }

@@ -17,6 +17,7 @@ export class IamStore {
   private readonly currentUserIdSignal = signal<number | null>(null);
   private readonly usersSignal = signal<Array<User>>([]);
   private readonly mfaSetupDataSignal = signal<MfaSetupResource | null>(null);
+  private readonly smsMfaPendingSignal = signal<boolean>(false);
 
   readonly isSignedIn = this.isSignedInSignal.asReadonly();
   readonly loadingUsers = signal<boolean>(false);
@@ -28,6 +29,7 @@ export class IamStore {
   readonly error = this._errorSignal.asReadonly();
   readonly isLoadingUsers = this.loadingUsers.asReadonly();
   readonly mfaSetupData = this.mfaSetupDataSignal.asReadonly();
+  readonly smsMfaPending = this.smsMfaPendingSignal.asReadonly();
 
     constructor(private iamApi: IamApi, private paymentsApi: PaymentsApi) {
       const token = localStorage.getItem('token');
@@ -139,12 +141,28 @@ export class IamStore {
     });
   }
 
+  setupSmsMfa(phoneNumber: string) {
+    this._loadingSignal.set(true);
+    this._errorSignal.set(null);
+    this.iamApi.mfaSetupSms(phoneNumber).subscribe({
+      next: () => {
+        this.smsMfaPendingSignal.set(true);
+        this._loadingSignal.set(false);
+      },
+      error: () => {
+        this._errorSignal.set('Failed to send SMS verification code.');
+        this._loadingSignal.set(false);
+      }
+    });
+  }
+
   enableMfa(code: string, router: Router) {
     this._loadingSignal.set(true);
     this._errorSignal.set(null);
     this.iamApi.mfaEnable(code).subscribe({
       next: () => {
         this.mfaSetupDataSignal.set(null);
+        this.smsMfaPendingSignal.set(false);
         this._loadingSignal.set(false);
         router.navigate(['/analytics/dashboard']).then();
       },
