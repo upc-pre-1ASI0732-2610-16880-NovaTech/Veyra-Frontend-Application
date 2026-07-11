@@ -20,7 +20,7 @@ export class AssignRoomCommandsApiEndpoint extends ErrorHandlingEnabledBaseType 
   assignRoom(residentId: number, assignRoomCommand: AssignRoomCommand): Observable<Resident> {
     const resource = this.assignRoomCommandAssembler.toResourceFromEntity(assignRoomCommand);
     const url = residentRoomsEndpointUrl.replace('{residentId}', residentId.toString());
-    return this.http.post<Resident>(url, resource).pipe(
+    return this.http.patch<Resident>(url, resource).pipe(
       map(assignedRoom => this.residentAssembler.toEntityFromResource(assignedRoom)),
       catchError(this.handleError('Failed to assign room to resident'))
     );

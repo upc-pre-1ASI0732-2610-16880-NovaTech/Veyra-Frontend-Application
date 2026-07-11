@@ -10,7 +10,9 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { MatError, MatFormField } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { CreateNursingHomeCommand } from '../../../domain/model/create-nursing-home.command';
+import { HttpClient } from '@angular/common/http';
 import { retry } from 'rxjs';
+import { environment } from '../../../../../environments/environment';
 
 @Component({
   selector: 'app-nursing-home-form',
@@ -35,26 +37,42 @@ export class NursingHomeForm {
   protected store = inject(NursingStore);
   private router = inject(Router);
   private fb = inject(FormBuilder);
-  adminId: number = Number(localStorage.getItem('userId'));
+  private http = inject(HttpClient);
+  adminId: number | null = null;
   showForm: boolean = false;
 
   constructor() {
-    const adminId = Number(localStorage.getItem('userId'));
+    const userId = Number(localStorage.getItem('userId'));
 
-    if (!adminId) {
+    if (!userId) {
       this.router.navigate(['/iam/sign-in']).then();
       return;
     }
 
-    this.store['nursingApi'].getNursingHome(adminId).pipe(retry(2)).subscribe({
-      next: nursingHome => {
-        this.store['_nursingHomesSignal'].set(nursingHome);
-        localStorage.setItem('nursingHomeId', nursingHome.id.toString());
-        this.router.navigate(['/analytics/dashboard']).then();
+    // administratorId is a separate identifier from userId — it must be resolved from the backend,
+    // not assumed to be numerically equal (they only coincide for the very first registered users).
+    const administratorByUserUrl = `${environment.platformProviderApiBaseUrl}${environment.platformProviderAdministratorByUserEndpointPath}`
+      .replace('{userId}', userId.toString());
+
+    this.http.get<{ id: number; userId: number }>(administratorByUserUrl).subscribe({
+      next: administrator => {
+        this.adminId = administrator.id;
+
+        this.store['nursingApi'].getNursingHome(administrator.id).pipe(retry(2)).subscribe({
+          next: nursingHome => {
+            this.store['_nursingHomesSignal'].set(nursingHome);
+            localStorage.setItem('nursingHomeId', nursingHome.id.toString());
+            this.router.navigate(['/analytics/dashboard']).then();
+          },
+          error: () => {
+            this.showForm = true;
+            this.store['_errorSignal'].set('No nursing home found');
+          }
+        });
       },
-      error: err => {
+      error: () => {
         this.showForm = true;
-        this.store['_errorSignal'].set('No nursing home found');
+        this.store['_errorSignal'].set('No administrator profile found for this user');
       }
     });
   }
@@ -82,6 +100,11 @@ export class NursingHomeForm {
       return;
     }
 
+    if (!this.adminId) {
+      alert('No se pudo determinar el administrador. Intenta iniciar sesión nuevamente.');
+      return;
+    }
+
     const nursingHome = this.form.getRawValue();
 
     const createNursingHomeCommand = new CreateNursingHomeCommand({
@@ -97,16 +120,14 @@ export class NursingHomeForm {
       ruc: nursingHome.ruc
     });
 
-    this.store.addNursingHome(this.adminId, createNursingHomeCommand);
-
-    setTimeout(() => {
-      if (this.store.error()) {
-        alert(this.store.error()!);
-        return;
+    this.store.addNursingHome(this.adminId, createNursingHomeCommand).subscribe({
+      next: () => {
+        this.router.navigate(['/analytics/dashboard']).then();
+      },
+      error: () => {
+        alert(this.store.error() ?? 'No se pudo crear la casa de reposo.');
       }
-
-      this.router.navigate(['/analytics/dashboard']).then();
-    }, 300);
+    });
   }
 
   private resizeImage(file: File, maxWidth: number, maxHeight: number): Promise<string> {

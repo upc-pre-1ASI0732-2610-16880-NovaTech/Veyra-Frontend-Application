@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -21,7 +22,7 @@ import { PaymentStore } from '../../../application/payment.store';
   standalone: true,
   imports: [
     CommonModule, CurrencyPipe, ReactiveFormsModule, TranslatePipe,
-    MatFormFieldModule, MatButtonModule, MatCardModule,
+    MatFormFieldModule, MatInputModule, MatButtonModule, MatCardModule,
     MatIconModule, MatProgressSpinnerModule, MatDividerModule, MatCheckboxModule
   ]
 })
