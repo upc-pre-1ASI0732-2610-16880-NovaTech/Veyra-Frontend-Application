@@ -10,7 +10,11 @@ export interface MfaSetupResource {
 }
 
 export interface MfaVerifyResource {
+  id: number;
+  username: string;
+  roles: string[];
   token: string;
+  mfaRequired: boolean;
 }
 
 export interface MfaStatusResource {
