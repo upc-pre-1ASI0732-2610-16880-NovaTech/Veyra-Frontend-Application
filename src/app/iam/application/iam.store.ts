@@ -119,9 +119,22 @@ export class IamStore {
       next: (res) => {
         localStorage.removeItem('mfa_pending_user_id');
         localStorage.setItem('token', res.token);
+        localStorage.setItem('userId', res.id.toString());
+        localStorage.setItem('username', res.username);
+
         this.isSignedInSignal.set(true);
+        this.currentUsernameSignal.set(res.username);
+        this.currentUserIdSignal.set(res.id);
         this._loadingSignal.set(false);
-        router.navigate(['/analytics/dashboard']).then();
+
+        if (res.roles.includes('ROLE_ADMIN')) {
+          this.paymentsApi.getActiveSubscription(res.id).subscribe({
+            next: () => router.navigate(['/nursing/nursing-homes/new']).then(),
+            error: () => router.navigate(['/payments/choose']).then()
+          });
+        } else {
+          router.navigate(['/analytics/dashboard']).then();
+        }
       },
       error: (err) => {
         this._errorSignal.set('Invalid TOTP code. Please try again.');

@@ -21,6 +21,7 @@ export const environment = {
   platformProviderSignInEndpointPath: '/authentication/sign-in',
   platformProviderSignUpEndpointPath: '/authentication/sign-up',
   platformProviderAdministratorsEndpointPath: '/administrators',
+  platformProviderAdministratorByUserEndpointPath: '/administrators/by-user/{userId}',
   platformProviderMfaSetupEndpointPath: '/authentication/mfa/setup',
   platformProviderMfaEnableEndpointPath: '/authentication/mfa/enable',
   platformProviderMfaDisableEndpointPath: '/authentication/mfa/disable',

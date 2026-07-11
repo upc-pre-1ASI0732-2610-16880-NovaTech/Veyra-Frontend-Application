@@ -32,8 +32,16 @@ export class ActivityList implements OnInit {
   private router  = inject(Router);
 
   nursingHomeId    = Number(localStorage.getItem('nursingHomeId'));
-  selectedDate     = new Date().toISOString().slice(0, 10);
+  selectedDate     = ActivityList.formatLocalDate(new Date());
   displayedColumns = ['hour', 'activityName', 'areaToDevelop', 'attendantName', 'status'];
+
+  /** Formats a Date as YYYY-MM-DD using local time components (not UTC, unlike toISOString()). */
+  private static formatLocalDate(date: Date): string {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+  }
 
   ngOnInit(): void { this.loadForDate(); }
 
